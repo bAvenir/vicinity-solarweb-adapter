@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage",
     "analyze": "node sonar-scanner.js"
   },
   "author": "Jorge Almela",
@@ -30,5 +30,25 @@
     "jest-sonar-reporter": "^2.0.0",
     "nodemon": "^2.0.2",
     "sonarqube-scanner": "^2.6.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testResultsProcessor": "jest-sonar-reporter",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/_configuration/"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/_configuration/"
+    ]
+  },
+  "jestSonar": {
+    "reportPath": "coverage",
+    "reportFile": "test-reporter.xml",
+    "indent": 4
   }
 }

@@ -2,11 +2,11 @@
 const stoppable  = require('stoppable');
 
 // Load modules
-const config = require('./_configuration/configuration'),
-      app =  require('./server');
+const config = require('./src/_configuration/configuration'),
+      app =  require('./src/server');
 
 // Load loggers
-let Log = require('./_classes/logger');
+let Log = require('./src/_classes/logger');
 let logger = new Log();
 
 /* WEB SERVER lifecycle

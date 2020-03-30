@@ -1,4 +1,5 @@
-src/.env
-src/node_modules
-src/package-*
+.env
+node_modules
+package-*
 .DS_Store
+.scannerwork/

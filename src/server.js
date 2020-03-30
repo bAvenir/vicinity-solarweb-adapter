@@ -34,7 +34,7 @@ server.use(cors())
         .use(bodyParser.urlencoded({ extended: true, limit: config.maxPayload}))
         .use(bodyParser.json({limit: config.maxPayload}))
         .use(cookieParser())
-        .use(helmet)
+        .use(helmet())
         .use(morgan(':status - :date[iso] - :method - :url - :response-time - :remote-addr', { "stream": logger.stream}));
 
 // API 

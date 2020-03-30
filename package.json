@@ -4,7 +4,8 @@
   "description": "Scaffold to build NodeJS express apps",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "analyze": "node sonar-scanner.js"
   },
   "author": "Jorge Almela",
   "license": "MIT",
@@ -22,5 +23,11 @@
     "request-promise": "^4.2.4",
     "stoppable": "^1.1.0",
     "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "jest": "^25.2.4",
+    "jest-sonar-reporter": "^2.0.0",
+    "nodemon": "^2.0.2",
+    "sonarqube-scanner": "^2.6.0"
   }
 }

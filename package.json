@@ -4,6 +4,7 @@
   "description": "Scaffold to build NodeJS express apps",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest --coverage",
     "analyze": "node sonar-scanner.js"

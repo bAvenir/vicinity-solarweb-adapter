@@ -3,23 +3,28 @@ const stoppable  = require('stoppable');
 
 // Load modules
 const config = require('./src/_configuration/configuration'),
-      app =  require('./src/server');
+      app =  require('./src/server'),
+      errorHandler = require('./src/_utils/errorHandler');
 
 // Load loggers
-let Log = require('./src/_classes/logger');
+const Log = require('./src/_classes/logger');
 let logger = new Log();
 
 /* WEB SERVER lifecycle
   Start server
   Connection manager wrapping to end connections gracefully
   Control kill signals
+  Control HTTP server errors
 */
 let server; // Initialize in higher scope
 function startServer() {
   server = stoppable(app.listen(config.port, config.ip, function () {
+    // Server started
     logger.info('Webserver is ready in port: ' + config.port, 'MAIN');
     bootstrap(); // Initialize everything else
   }), 3000);
+  // Listening for HTTP server errors
+  server.on('error', errorHandler.serverError);
 }
 
 // quit on ctrl-c when running docker in terminal
@@ -56,7 +61,10 @@ startServer();
 
 // Start other services
 function bootstrap(){
-  // ...
+
+  // Run other services here
+  //...
+
   logger.info("All services initialized", "MAIN");
 }
 

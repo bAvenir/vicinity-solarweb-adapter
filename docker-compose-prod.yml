@@ -1,0 +1,22 @@
+version: '2.4'
+
+services:
+  nodejs-scaffold:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: prod
+    volumes:
+    - .:/app:delegated
+    ports:
+    - 3000:3000
+  proxy:
+    volumes:
+    - ~/docker_data/logs/nginx:/var/log/nginx
+    - /etc/ssl/bavenir/bavenir_eu.key:/var/certificates/privkey.pem:ro
+    - /etc/ssl/bavenir/bavenir_eu.crt:/var/certificates/fullchain.pem:ro
+    - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+    - 443:443
+    - 80:80
+    image: nginx:1.15-alpine

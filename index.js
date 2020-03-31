@@ -54,11 +54,8 @@ END SERVER LIFECYCLE
 */
 
 /*
-Area to start processes
+Area to start services
 */
-// Start server
-startServer();
-
 // Start other services
 function bootstrap(){
 
@@ -67,10 +64,12 @@ function bootstrap(){
 
   logger.info("All services initialized", "MAIN");
 }
-
 /*
-END AREA to start processes
+END AREA to start services
 */
+
+// Start server
+startServer();
 
 // Export server module
 module.exports = server;

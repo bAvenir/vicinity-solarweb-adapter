@@ -1,4 +1,5 @@
 /* Module containing error handlers */
+let myErrors = {};
 
 //Load configuration
 const config = require('../_configuration/configuration');
@@ -10,7 +11,7 @@ let logger = new Log();
 /**
  * Event listener for HTTP server "error" event.
  */
-module.exports.serverError = function(error) {
+ myErrors.serverError = function(error) {
     if (error.syscall !== 'listen') {
       throw error;
     }
@@ -33,3 +34,7 @@ module.exports.serverError = function(error) {
         throw error;
     }
   }
+
+// Make functions public
+module.exports = myErrors;
+  

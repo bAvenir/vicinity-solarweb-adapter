@@ -1,7 +1,7 @@
 {
-  "name": "nodejs-scaffold",
+  "name": "bAvenirAdapter",
   "version": "1.0.0",
-  "description": "Scaffold to build NodeJS express apps",
+  "description": "bAvenir generic adapter to VICINITY",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

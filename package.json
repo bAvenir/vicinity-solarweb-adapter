@@ -44,7 +44,8 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "/_configuration/"
+      "/_configuration/",
+      "/_test/"
     ]
   },
   "jestSonar": {

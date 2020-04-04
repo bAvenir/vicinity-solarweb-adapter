@@ -15,7 +15,15 @@
     * npm run test -- for jest tests
     * npm run analyze -- for sonarqube analysis 
 
-## Includes:
+## Configuration
+
+Use a .env file
+
+* ENV_VAR=SOMETHING
+
+Load into app using process.env.ENV_VAR and the npm package dotenv.
+
+## Includes
 
 * Testing
 * Security features

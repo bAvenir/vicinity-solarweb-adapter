@@ -1,4 +1,9 @@
-// Global packages
+/**
+ * logger.js
+ * Class that helps building logs
+ * @class
+ */
+
 var logger = require('../_utils/logger');
 
 module.exports = class Log {
@@ -7,6 +12,7 @@ module.exports = class Log {
   }
 
   // Methods
+  
   debug(message, agent, other) {
     logger.debug(this._buildLog(this.ini, message, agent, other));
   }

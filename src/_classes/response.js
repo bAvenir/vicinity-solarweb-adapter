@@ -1,4 +1,8 @@
-// Class decribing the standard response
+/**
+ * response.js
+ * Class decribing the standard response  
+ * @class
+ */ 
 module.exports = class Resp {
   constructor(status, message){
     this.error = status === 500;

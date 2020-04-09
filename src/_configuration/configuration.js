@@ -10,14 +10,14 @@ let config = module.exports = {};
 config.env = process.env.NODE_ENV || 'development';
 
 if(process.env.NODE_ENV === 'development'){
-    config.port = process.env.PORT || 3000;
-    config.ip = process.env.IP || '192.168.0.1';
-    config.timeout = process.env.SERVER_REQ_TIMEOUT || 30000;
-    config.maxPayload = process.env.MAX_PAYLOAD || '100kb';
+    config.port = process.env.SERVER_PORT || 3000;
+    config.ip = process.env.SERVER_IP || '192.168.0.1';
+    config.timeout = process.env.SERVER_TIMEOUT || 30000;
+    config.maxPayload = process.env.SERVER_MAX_PAYLOAD || '100kb';
 } else {
-    config.port = process.env.PORT || 3000;
+    config.port = process.env.SERVER_PORT || 3000;
     config.ip = process.env.IP || '192.168.0.1';
-    config.timeout = process.env.SERVER_REQ_TIMEOUT || 60000;
-    config.maxPayload = process.env.MAX_PAYLOAD || '500kb';
+    config.timeout = process.env.SERVER_TIMEOUT || 60000;
+    config.maxPayload = process.env.SERVER_MAX_PAYLOAD || '500kb';
 }
 

@@ -22,11 +22,6 @@ module.exports = class Request {
   constructor(){
     this.timeout = config.timeout || 5000;
     this.method = "GET";
-    this.headers =  {
-        'Content-Type' : 'application/json; charset=utf-8',
-        'Accept' : 'application/json',
-        'simple': false
-      };
   }
 
   // Methods
@@ -43,7 +38,7 @@ module.exports = class Request {
     }
   }
 
-  setUri(endpoint, url){
+  setUri(url, endpoint){
       this.uri = url + endpoint;
   }
 
@@ -61,6 +56,7 @@ module.exports = class Request {
 
   _validate(){
     if(!this.uri){ throw new Error("Missing URI"); }
+    if(!this.method){ throw new Error("Missing HTTP METHOD"); }
   }
 
   async send(){

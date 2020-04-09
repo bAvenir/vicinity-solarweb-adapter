@@ -27,7 +27,8 @@ logger = require('./_utils/logger');
 const config = require('./_configuration/configuration');
 
 // Load API
-var api = require('./_api/routes');
+let api = require('./_api/routes');
+let agent = require('./_agent/routes');
 
 // Middlewares
 server.use(cors())
@@ -41,6 +42,7 @@ server.use(cors())
 // If status code > 400, forwards to next middleware for handling
 // @TODO set up IP rate-limiter for necessary endpoints (NGINX alternative)
 server.use('/api', api);
+server.use('/agent', agent);
 
 // error handler 
 // @TODO Build in separate module

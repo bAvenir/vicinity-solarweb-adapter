@@ -4,6 +4,8 @@
 * @interface
 */ 
 
+const Req = require('./gatewayRequest');
+
 // ***** AUTHENTICATION *****
 
 /**
@@ -12,7 +14,17 @@
  * @return {error: boolean, message: string} 
  */
 
-module.exports.login = async function(user, password){}
+module.exports.login = async function(oid){
+    try{
+        let request = new Req(oid);
+        request.setUri('login');
+        let result = await request.send();
+        request = null;
+        return Promise.resolve(result);
+    } catch(err) {
+        return Promise.reject({error: true, message: err})
+    }
+}
 
 /**
  * Logout an object in VICINITY
@@ -20,7 +32,7 @@ module.exports.login = async function(user, password){}
  * @return {error: boolean, message: string} 
  */
 
-module.exports.logout = async function(user, password){}
+module.exports.logout = async function(oid){}
 
 // ***** REGISTRATION *****
 
@@ -68,7 +80,7 @@ module.exports.removeRegistrations = async function(body){}
  * @return {error: boolean, message: [oid: string]} 
  */
 
-module.exports.discovery = async function(user, password){}
+module.exports.discovery = async function(oid){}
 
 /**
  * @TBD:
@@ -85,7 +97,7 @@ module.exports.discovery = async function(user, password){}
  * @return {error: boolean, message: object} 
  */
 
-module.exports.getProperty = async function(user, password, oid, pid){}
+module.exports.getProperty = async function(oid, remote_oid, pid){}
 
  /**
  * Activate the event channel
@@ -94,7 +106,7 @@ module.exports.getProperty = async function(user, password, oid, pid){}
  * @return {error: boolean, message: string} 
  */
 
-module.exports.activateEventChannel = async function(user, password, eid){}
+module.exports.activateEventChannel = async function(oid, eid){}
 
  /**
  * Publish event to channel
@@ -103,7 +115,7 @@ module.exports.activateEventChannel = async function(user, password, eid){}
  * @return {error: boolean, message: string} 
  */
 
-module.exports.publishEvent = async function(user, password, eid, body){}
+module.exports.publishEvent = async function(oid, eid, body){}
 
  /**
  * Deactivate event channel
@@ -112,7 +124,7 @@ module.exports.publishEvent = async function(user, password, eid, body){}
  * @return {error: boolean, message: string} 
  */
 
-module.exports.deactivateEventChannel = async function(user, password, eid){}
+module.exports.deactivateEventChannel = async function(oid, eid){}
 
  /**
  * Get status of remote event channel
@@ -121,7 +133,7 @@ module.exports.deactivateEventChannel = async function(user, password, eid){}
  * @return {error: boolean, message: string} 
  */
 
-module.exports.statusRemoteEventChannel = async function(user, password, oid, eid){}
+module.exports.statusRemoteEventChannel = async function(oid, remote_oid, eid){}
 
  /**
  * Subscribe to remote event channel
@@ -130,7 +142,7 @@ module.exports.statusRemoteEventChannel = async function(user, password, oid, ei
  * @return {error: boolean, message: string} 
  */
 
-module.exports.subscribeRemoteEventChannel = async function(user, password, oid, eid){}
+module.exports.subscribeRemoteEventChannel = async function(oid, remote_oid, eid){}
 
  /**
  * Unsubscribe to remote event channel
@@ -139,7 +151,7 @@ module.exports.subscribeRemoteEventChannel = async function(user, password, oid,
  * @return {error: boolean, message: string} 
  */
 
-module.exports.unsubscribeRemoteEventChannel = async function(user, password, oid, eid){}
+module.exports.unsubscribeRemoteEventChannel = async function(oid, remote_oid, eid){}
 
 /**
  * @TBD:

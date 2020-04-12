@@ -20,7 +20,6 @@ destination - Allows choosing the urls defined in connections
 
 module.exports = class Request {
   constructor(){
-    this.timeout = config.timeout || 5000;
     this.method = "GET";
   }
 

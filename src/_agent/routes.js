@@ -11,11 +11,14 @@ let controller = require('./controller');
 
 router
     // ***** Agent endpoints *****
+  .get('/login', controller.login)
   .get('/login/:oid', controller.login)
+  .get('/logout', controller.logout)
   .get('/logout/:oid', controller.logout)
   .get('/registration', controller.getRegistrations)
   .post('/registration', controller.postRegistrations)
   .post('/registration/remove', controller.removeRegistrations)
+  .get('/discovery', controller.discovery)
   .get('/discovery/:oid', controller.discovery)
     // ***** Gateway callback *****
   .get('/objects/:oid/properties/:pid', controller.consumption) // get property requested to gtw

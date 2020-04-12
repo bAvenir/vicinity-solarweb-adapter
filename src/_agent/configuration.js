@@ -17,3 +17,5 @@ config.port = process.env.GTW_PORT || '8181';
 config.callbackRoute = process.env.GTW_CALLBACK_ROUTE || 'agent';
 config.route = process.env.GTW_ROUTE || 'api';
 config.timeout = process.env.GTW_TIMEOUT || '30000';
+config.gatewayId = process.env.GTW_ID;
+config.gatewayPwd = process.env.GTW_PWD;

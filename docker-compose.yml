@@ -10,7 +10,21 @@ services:
     - .:/app:delegated
   proxy:
     volumes:
-    - ./nginx_local.conf:/etc/nginx/conf.d/default.conf:ro
+    - ./nginx/nginx_local.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
     - 80:80
     image: nginx:1.15-alpine
+  gateway:
+    container_name: gateway
+    # restart: always
+    volumes:
+    - ./gateway/log:/gateway/log
+    - ./gateway/GatewayConfig.xml:/gateway/config/GatewayConfig.xml:ro
+    - ./gateway/keystore:/gateway/keystore
+    environment:
+    - UID=9999
+    - GID=9999
+    ports:
+    - 8181:8181
+    # image: gtw-api:latest
+    image: bavenir/vicinity-gateway-api:latest

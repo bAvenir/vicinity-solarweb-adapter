@@ -7,7 +7,7 @@
  */
 const express = require('express');
 let router = express.Router();
-let controller = require('./controller');
+let controller = require('./controllers');
 
 router
     // ***** Agent endpoints *****

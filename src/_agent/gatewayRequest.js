@@ -19,7 +19,7 @@ const config = require('./configuration');
           };
         this.url = "http://" + config.host + ":" + config.port + "/" + config.route + "/";
         this.oid = oid || null;
-        // TBD this.credentials = 
+        this._setAuthorization(this.oid);
       }
 
     setUri(endpoint){
@@ -34,8 +34,7 @@ const config = require('./configuration');
       if(oid){
         // TBD search for device pwd
       } else {
-        // config.gatewayId
-        // config.gatewayPwd
+        this.addHeader("Authorization", config.gatewayCredentials);
       }
     }
 

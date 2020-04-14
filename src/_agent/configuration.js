@@ -19,3 +19,4 @@ config.route = process.env.GTW_ROUTE || 'api';
 config.timeout = process.env.GTW_TIMEOUT || '30000';
 config.gatewayId = process.env.GTW_ID;
 config.gatewayPwd = process.env.GTW_PWD;
+config.gatewayCredentials = 'Basic ' +  new Buffer(process.env.GTW_ID + ":" + process.env.GTW_PWD).toString('base64');

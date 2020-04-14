@@ -18,7 +18,7 @@ module.exports.login = function(req, res){
     })
     .catch((err) => {
         logger.error(err, "AGENT");
-        res.json({error: true, message: "Something went wrong"})
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
     }) 
 }
 
@@ -32,7 +32,7 @@ module.exports.logout = function(req, res){
     })
     .catch((err) => {
         logger.error(err, "AGENT");
-        res.json({error: true, message: "Something went wrong"})
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
     }) 
 }
 
@@ -45,7 +45,7 @@ module.exports.getRegistrations = function(req, res){
     })
     .catch((err) => {
         logger.error(err, "AGENT");
-        res.json({error: true, message: "Something went wrong"})
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
     }) 
 }
 
@@ -59,7 +59,7 @@ module.exports.postRegistrations = function(req, res){
     })
     .catch((err) => {
         logger.error(err, "AGENT");
-        res.json({error: true, message: "Something went wrong"})
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
     }) 
 }
 
@@ -73,7 +73,7 @@ module.exports.removeRegistrations = function(req, res){
     })
     .catch((err) => {
         logger.error(err, "AGENT");
-        res.json({error: true, message: "Something went wrong"})
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
     }) 
 }
 
@@ -87,7 +87,7 @@ module.exports.discovery = function(req, res){
     })
     .catch((err) => {
         logger.error(err, "AGENT");
-        res.json({error: true, message: "Something went wrong"})
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
     }) 
 }
 

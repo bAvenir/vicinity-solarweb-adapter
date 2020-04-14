@@ -65,7 +65,7 @@ module.exports = class Request {
       // logger.debug(response.ip)
       // logger.debug(response.isFromCache)
       // logger.debug(response.statusCode)
-      return Promise.resolve(response.body);
+      return Promise.resolve(JSON.parse(response.body));
     } catch(err) {
       // logger.error(err, "REQUEST");
       return Promise.reject(err);

@@ -1,8 +1,6 @@
 // Global packages
 const Log = require('./logger');
-const request = require('request-promise');
-const config = require('../_configuration/configuration');
-
+const request = require('got');
 
 /**
  * request.js
@@ -20,20 +18,18 @@ destination - Allows choosing the urls defined in connections
 
 module.exports = class Request {
   constructor(){
-    this.method = "GET";
+    this.options = {};
+    this.options.isStream = false;
+    this.options.retry = 2; // Retries on failure N times
+    this.options.throwHttpErrors = true; // Non 2XX is treated as error
+    this.options.method = "GET"; // Default method
   }
 
   // Methods
 
-  setOptions(options) {
-    if (options) {
-      this.options = options;
-    }
-  }
-
   setBody(body){
-    if(body && this.method !== "GET"){
-      this.body = JSON.stringify(body);
+    if(body && this.options.method !== "GET"){
+      this.options.body = JSON.stringify(body);
     }
   }
 
@@ -42,20 +38,20 @@ module.exports = class Request {
   }
 
   setMethod(method){
-    this.method = method;
+    this.options.method = method;
   }
 
   addQueryString(key, value){
-    this.qs[key] = value;
+    this.options.searchParams[key] = value;
   }
 
   addHeader(key, value){
-      this.headers[key] = value;
+      this.options.headers[key] = value;
   }
 
   _validate(){
     if(!this.uri){ throw new Error("Missing URI"); }
-    if(!this.method){ throw new Error("Missing HTTP METHOD"); }
+    if(!this.options.method){ throw new Error("Missing HTTP METHOD"); }
   }
 
   async send(){
@@ -64,10 +60,14 @@ module.exports = class Request {
       // validate all parameters are ready
       this._validate();
       logger.debug("Calling... " + this.uri, "REQUEST");
-      let response = await request(this);
-      return Promise.resolve(response);
+      let response = await request(this.uri, this.options);
+      // logger.debug(JSON.parse(response.request)) // See original request
+      // logger.debug(response.ip)
+      // logger.debug(response.isFromCache)
+      // logger.debug(response.statusCode)
+      return Promise.resolve(response.body);
     } catch(err) {
-      logger.error(err, "REQUEST");
+      // logger.error(err, "REQUEST");
       return Promise.reject(err);
     }
   }

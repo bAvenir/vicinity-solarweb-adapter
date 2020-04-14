@@ -4,23 +4,35 @@ This is a Node.js project that acts as an adapter between VICINITY and other tec
 
 The first version aims to support the following interactions:
 
+* Data collection service
 * REST API to VCNT
 * MQTT server to VCNT
+
+## Pre-requisites
+
+### Mandatory 
+
+* Node.js > v12
+* Docker
+
+### Recommended for full functionality
+
+* Docker-compose
+* Sonarqube server
 
 ## How to run
 
 * With docker (Uses Nginx proxy)
-    * ./setup.sh -- to run development mode
-    * ./setup.sh -p -- to run production (If tests fail the process stops)
-    * docker-compose up -- to run as development in interactive mode
+    * ./_setup.sh -> to run development mode
+    * ./_setup.sh -p -> to run production (If tests fail the process stops)
+    * docker-compose up -> to run as development in interactive mode
 
 * Without docker
-    * npm run start -- Normal mode
-    * npm run dev -- Development mode (Listening to changes)
+    * ./_setup.sh -l -> to run development mode
 
 * Run development tools
-    * npm run test -- for jest tests
-    * npm run analyze -- for sonarqube analysis 
+    * npm run test -> for jest tests
+    * npm run analyze -> for sonarqube analysis 
 
 ## Configuration
 
@@ -32,10 +44,20 @@ Example:
 
     # Configuration
     NODE_ENV=development
-    PORT=3000
-    IP=0.0.0.0
-    MAX_PAYLOAD=500kb
-    # Sonar-scanner
+    ## SERVER
+    SERVER_PORT=9997
+    SERVER_IP=0.0.0.0
+    SERVER_TIMEOUT=10000
+    SERVER_MAX_PAYLOAD=100kb
+    ## GATEWAY
+    GTW_HOST="localhost"
+    GTW_PORT=8181
+    GTW_CALLBACK_ROUTE=agent
+    GTW_ROUTE=api
+    GTW_TIMEOUT=10000
+    GTW_ID=""
+    GTW_PWD=""
+    ## Sonar-scanner
     SONAR_URL=http://localhost:9000
     SONAR_TOKEN=<ADD_YOUR_TOKEN>
     SONAR_PROJECT_NAME=<ADD_YOUR_PROJECT_NAME>

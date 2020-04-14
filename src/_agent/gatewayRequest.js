@@ -11,8 +11,8 @@ const config = require('./configuration');
 
     constructor(oid) {
         super();
-        this.timeout = config.timeout || 5000;
-        this.headers =  {
+        this.options.timeout = { request: config.timeout || 5000 };
+        this.options.headers =  {
             'Content-Type' : 'application/json; charset=utf-8',
             'Accept' : 'application/json',
             'simple': false

@@ -5,7 +5,7 @@
 * @interface
 */ 
 
-const Req = require('./gatewayRequest');
+const Req = require('./_classes/gatewayRequest');
 const config = require('./configuration');
 
 // ***** AUTHENTICATION *****

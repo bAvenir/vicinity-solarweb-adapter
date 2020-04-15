@@ -10,6 +10,9 @@ const config = require('./src/_configuration/configuration'),
 const Log = require('./src/_classes/logger');
 let logger = new Log();
 
+// Load services
+const agent = require('./src/_agent/agent');
+
 /* WEB SERVER lifecycle
   Start server
   Connection manager wrapping to end connections gracefully
@@ -56,13 +59,19 @@ END SERVER LIFECYCLE
 /*
 Area to start services
 */
-// Start other services
-function bootstrap(){
+async function bootstrap(){
+  try{
+    // TBD decide what to do if initialization fails (Stop adapter, restart, notify ...)
+    await agent.initialize();
 
-  // Run other services here
-  //...
+    // Run other services here
+    //...
 
-  logger.info("All services initialized", "MAIN");
+    logger.info("All services initialized", "MAIN");
+
+  } catch(err) {
+    logger.error("Service initialization halted due to errors, check previous logs for more info", "MAIN");
+  }
 }
 /*
 END AREA to start services

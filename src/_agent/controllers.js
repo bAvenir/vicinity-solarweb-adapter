@@ -12,7 +12,7 @@ module.exports.login = function(req, res){
     let oid = req.params.oid || null; // If null => Use gtw credentials
     let logger = new Log();
     gtwInterface.login(oid)
-    .then((response) => {
+    .then(() => {
         logger.info("Login successful", "AGENT");
         res.json({error: false, message: "Login successful"})
     })
@@ -26,7 +26,7 @@ module.exports.logout = function(req, res){
     let oid = req.params.oid || null; // If null => Use gtw credentials
     let logger = new Log();
     gtwInterface.logout(oid)
-    .then((response) => {
+    .then(() => {
         logger.info("Logout successful", "AGENT");
         res.json({error: false, message: "Logout successful"})
     })

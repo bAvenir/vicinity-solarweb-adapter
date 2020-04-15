@@ -4,14 +4,14 @@
  * @class
  */
 
-const Request = require('../_classes/request');
-const config = require('./configuration');
+const Request = require('../../_classes/request');
+const config = require('../configuration');
 
  module.exports = class gtwRequest extends Request{
 
     constructor(oid) {
         super();
-        this.options.timeout = { request: config.timeout || 5000 };
+        this.options.timeout = { request: config.timeout || 10000 };
         this.options.headers =  {
             'Content-Type' : 'application/json; charset=utf-8',
             'Accept' : 'application/json',

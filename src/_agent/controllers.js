@@ -41,7 +41,7 @@ module.exports.getRegistrations = function(req, res){
     let logger = new Log();
     gtwInterface.getRegistrations()
     .then((response) => {
-        logger.info("Objects registered retrieved", "AGENT");
+        logger.info("Objects registered with your gateway retrieved", "AGENT");
         res.json({error: false, message: response})
     })
     .catch((err) => {
@@ -101,7 +101,7 @@ module.exports.discovery = function(req, res){
     let logger = new Log();
     gtwInterface.discovery(oid)
     .then((response) => {
-        logger.info("Neighbours discovered", "AGENT");
+        logger.info("Neighbours of " + oid + " discovered", "AGENT");
         res.json({error: false, message: response})
     })
     .catch((err) => {

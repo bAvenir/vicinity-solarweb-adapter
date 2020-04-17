@@ -8,10 +8,11 @@ const config = require('./configuration');
 const gateway = require('./interface');
 const services = require('./services');
 const Log = require('../_classes/logger');
-const registrationsFile = require('../../agent/registrations.json');
-const propertiesFile = require('../../agent/properties.json');
-const actionsFile = require('../../agent/actions.json');
-const eventsFile = require('../../agent/events.json');
+const fileMgmt = require('../_utils/fileMgmt');
+const registrationsFilePath = './agent/registrations.json';
+const propertiesFilePath = './agent/properties.json';
+const actionsFilePath = './agent/actions.json';
+const eventsFilePath = './agent/events.json';
 
 /**
  * Initialization process of the agent module
@@ -21,14 +22,29 @@ module.exports.initialize = async function(){
 
     try{
         logger.info('Agent startup initiated...', 'AGENT');
-        // Check current configuration
+        // Check current configuration 
         if(!config.gatewayId || !config.gatewayPwd) throw new Error('Missing gateway id or credentials...');
+        // Load registrations and interaction pattern files
         let todo = [];
+        todo.push(fileMgmt.read(registrationsFilePath));
+        todo.push(fileMgmt.read(propertiesFilePath));
+        todo.push(fileMgmt.read(actionsFilePath));
+        todo.push(fileMgmt.read(eventsFilePath));
+        // Parse agent files
+        let files = await Promise.all(todo); // Stores agent files during init
+        let registrationsFile = JSON.parse(files[0]);
+        let propertiesFile = JSON.parse(files[1]);
+        let actionsFile = JSON.parse(files[2]);
+        let eventsFile = JSON.parse(files[3]);
+        files = null; // To be collected by GC
+        // Process loaded files
+        todo = [];
         todo.push(services.processConfig(registrationsFile, "registrations"));
         todo.push(services.processConfig(propertiesFile, "properties"));
         todo.push(services.processConfig(actionsFile, "actions"));
         todo.push(services.processConfig(eventsFile, "events"));
         await Promise.all(todo);
+        // Get status of registrations in platform
         let objectsInPlatform = await gateway.getRegistrations();
         // Compare local regitrations with platform registrations
         // TBD Important to control discrepancies!!

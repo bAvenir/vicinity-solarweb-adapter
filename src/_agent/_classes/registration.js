@@ -38,9 +38,9 @@ const fileMgmt = require('../../_utils/fileMgmt');
             if(data.version) this.td.version = data.version;
             if(data.description) this.td.description = data.description;
             if(data.locatedIn) this.td['located-in'] = data.locatedIn;
-            this.td.actions = data.actions ? this._checkInteractionPatterns(data.actions, 'actions') : [];
-            this.td.events = data.events ? this._checkInteractionPatterns(data.events, 'events') : [];
-            this.td.properties = data.properties ? this._checkInteractionPatterns(data.properties, 'properties') : [];
+            this.td.actions = data.actions ? await this._checkInteractionPatterns(data.actions, 'actions') : [];
+            this.td.events = data.events ? await this._checkInteractionPatterns(data.events, 'events') : [];
+            this.td.properties = data.properties ? await this._checkInteractionPatterns(data.properties, 'properties') : [];
             return Promise.resolve({
                 agid: config.gatewayId,
                 thingDescriptions: [ this.td ]
@@ -118,11 +118,25 @@ const fileMgmt = require('../../_utils/fileMgmt');
 
     // Private Methods
 
-    _checkInteractionPatterns(interactions, type){
-        if(!Array.isArray(interactions)) throw new Error(`REGISTRATION ERROR: ${type} is not a valid array`);
-        // TBD go through array and pick all strings with valid interaction name
-        // TBD get interactions from file and fill in new array
-        return [];
+    async _checkInteractionPatterns(interactions, type){
+        let interactionsArray = [];
+        let identifiers = {'properties': 'pid', 'events': 'eid', 'actions': 'aid'};
+        let id = identifiers[type];
+        try{
+            if(!Array.isArray(interactions)) throw new Error(`REGISTRATION ERROR: ${type} is not a valid array`);
+            let localInteractions = await fileMgmt.read('./agent/' + type + '.json');
+            localInteractions = JSON.parse(localInteractions);
+            // TBD get this from memory in future version !!!
+            for(let i = 0, l = interactions.length; i < l; i++){
+                let aux = localInteractions.filter((item) => { return item[id] === interactions[i] });
+                if(aux[0] == null) throw new Error(`REGISTRATION ERROR: Interaction: ${interactions[i]} could not be found in ${type}`); 
+                interactionsArray.push(aux[0]);
+            }
+            // TBD If there are events --> Create the channel!!!
+            return Promise.resolve(interactionsArray);
+        } catch(err) {
+            return Promise.reject(err);
+        }
     }
 
     _validate(data){

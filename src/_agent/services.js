@@ -25,8 +25,7 @@ services.processConfig = async function(file, type){
             return Promise.resolve(true);
         }
     } catch(err) {
-        logger.error(err, "AGENT_SERVICES");
-        return Promise.reject("Problem processing configuration file: " + type);
+        return Promise.reject("Problem processing configuration file: " + type + " with error: " + err);
     }
 }
 
@@ -42,11 +41,10 @@ services.doLogins = async function(array){
             actions.push(gateway.login(array[i].oid));
         }
         await Promise.all(actions);
-        logger.info("All objects logged in platform", "AGENT_SERVICES");
+        logger.info('All logins were successful');
         return Promise.resolve("Logins were successful", "AGENT_SERVICES");
     } catch(err) {
-        logger.error(err, "AGENT_SERVICES");
-        return Promise.reject("Problem login objects in platform...");
+        return Promise.reject(err);
     }
 }
 
@@ -54,7 +52,6 @@ services.doLogins = async function(array){
  * Register object in platform
  */
 services.registerObject = async function(body){
-    let logger = new Log();
     let registration = new Regis();
     try{
         let td = await registration.buildTD(body);
@@ -69,8 +66,7 @@ services.registerObject = async function(body){
         registration = null;
         return Promise.resolve(result.message);
     } catch(err) {
-        logger.error(err, "AGENT_SERVICES");
-        return Promise.reject("Problem registering objects in platform...");
+        return Promise.reject(err);
     }
 }
 
@@ -78,15 +74,13 @@ services.registerObject = async function(body){
  * Remove object from platform
  */
 services.removeObject = async function(body){
-    let logger = new Log();
     try{
         let wrapper = Regis.addRemovalWrapper(body.oids);
         let result = await gateway.removeRegistrations(wrapper);
         await Regis.removeCredentials(body.oids);
         return Promise.resolve(result.message.message);
     } catch(err) {
-        logger.error(err, "AGENT_SERVICES");
-        return Promise.reject("Problem removing objects from platform...");
+        return Promise.reject(err);
     }
 }
 

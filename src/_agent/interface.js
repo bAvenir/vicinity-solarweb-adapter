@@ -18,7 +18,8 @@ const config = require('./configuration');
 
 module.exports.login = async function(oid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setUri('objects/login');
         let result = await request.send();
         request = null;
@@ -36,7 +37,8 @@ module.exports.login = async function(oid){
 
 module.exports.logout = async function(oid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setUri('objects/logout');
         let result = await request.send();
         request = null;
@@ -58,6 +60,7 @@ module.exports.logout = async function(oid){
 module.exports.getRegistrations = async function(){
     try{
         let request = new Req();
+        await request.setAuthorization(null);
         request.setUri('agents/' + config.gatewayId + '/objects');
         let result = await request.send();
         request = null;
@@ -78,6 +81,7 @@ module.exports.getRegistrations = async function(){
 module.exports.postRegistrations = async function(body){
     try{
         let request = new Req();
+        await request.setAuthorization();
         request.setMethod("POST");
         request.setBody(body);
         request.setUri('agents/' + config.gatewayId + '/objects');
@@ -99,6 +103,7 @@ module.exports.postRegistrations = async function(body){
 module.exports.removeRegistrations = async function(body){
     try{
         let request = new Req();
+        await request.setAuthorization();
         request.setMethod("POST");
         request.setBody(body);
         request.setUri('agents/' + config.gatewayId + '/objects/delete');
@@ -128,7 +133,8 @@ module.exports.removeRegistrations = async function(body){
 
 module.exports.discovery = async function(oid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setUri('objects');
         let result = await request.send();
         request = null;
@@ -155,7 +161,8 @@ module.exports.discovery = async function(oid){
 
 module.exports.getProperty = async function(oid, remote_oid, pid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setUri('objects/' + remote_oid + '/properties/' + pid);
         let result = await request.send();
         request = null;
@@ -174,7 +181,8 @@ module.exports.getProperty = async function(oid, remote_oid, pid){
 
 module.exports.activateEventChannel = async function(oid, eid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setMethod("POST");
         request.setUri('events/' + eid);
         let result = await request.send();
@@ -194,7 +202,8 @@ module.exports.activateEventChannel = async function(oid, eid){
 
 module.exports.publishEvent = async function(oid, eid, body){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setMethod("PUT");
         request.setBody(body);
         request.setUri('events/' + eid);
@@ -215,7 +224,8 @@ module.exports.publishEvent = async function(oid, eid, body){
 
 module.exports.deactivateEventChannel = async function(oid, eid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setMethod("DELETE");
         request.setUri('events/' + eid);
         let result = await request.send();
@@ -235,7 +245,8 @@ module.exports.deactivateEventChannel = async function(oid, eid){
 
 module.exports.statusRemoteEventChannel = async function(oid, remote_oid, eid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setUri('objects/' + remote_oid + '/events/' + eid);
         let result = await request.send();
         request = null;
@@ -254,7 +265,8 @@ module.exports.statusRemoteEventChannel = async function(oid, remote_oid, eid){
 
 module.exports.subscribeRemoteEventChannel = async function(oid, remote_oid, eid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setMethod('POST');
         request.setUri('objects/' + remote_oid + '/events/' + eid);
         let result = await request.send();
@@ -274,7 +286,8 @@ module.exports.subscribeRemoteEventChannel = async function(oid, remote_oid, eid
 
 module.exports.unsubscribeRemoteEventChannel = async function(oid, remote_oid, eid){
     try{
-        let request = new Req(oid);
+        let request = new Req();
+        await request.setAuthorization(oid);
         request.setMethod('DELETE');
         request.setUri('objects/' + remote_oid + '/events/' + eid);
         let result = await request.send();

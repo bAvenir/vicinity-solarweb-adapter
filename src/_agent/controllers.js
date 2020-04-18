@@ -8,9 +8,10 @@
 const Log = require('../_classes/logger');
 const gtwInterface = require('./interface');
 const services = require('./services');
+const adapter = require('../_adapters/interface');
 
 module.exports.login = function(req, res){
-    let oid = req.params.oid || null; // If null => Use gtw credentials
+    let oid = req.params.id || null; // If null => Use gtw credentials
     let logger = new Log();
     gtwInterface.login(oid)
     .then(() => {
@@ -24,7 +25,7 @@ module.exports.login = function(req, res){
 }
 
 module.exports.logout = function(req, res){
-    let oid = req.params.oid || null; // If null => Use gtw credentials
+    let oid = req.params.id || null; // If null => Use gtw credentials
     let logger = new Log();
     gtwInterface.logout(oid)
     .then(() => {
@@ -97,11 +98,11 @@ module.exports.removeRegistrations = function(req, res){
 }
 
 module.exports.discovery = function(req, res){
-    let oid = req.params.oid;
+    let oid = req.params.id;
     let logger = new Log();
     gtwInterface.discovery(oid)
     .then((response) => {
-        logger.info("Neighbours of " + oid + " discovered", "AGENT");
+        logger.info(`Neighbours of ${oid} discovered`, "AGENT");
         res.json({error: false, message: response})
     })
     .catch((err) => {
@@ -110,8 +111,217 @@ module.exports.discovery = function(req, res){
     }) 
 }
 
-module.exports.consumption = function(req, res){
-    // TBD Enable resource consumption through API
-    // Properties, events and actions
-    res.send('Endpoint under development');
-}
+// ***** Consume remote resources *****
+
+    /**
+     * Request remote property
+     * @param {STRING} id (my VICINITY OID)
+     * @param {STRING} oid (remote VICINITY OID)
+     * @param {STRING} pid (remote VICINITY property)
+     */
+    module.exports.getProperty = function(req, res){
+        let oid = req.params.id;
+        let remote_oid = req.params.oid;
+        let pid = req.params.pid;
+        gtwInterface.getProperty(oid, remote_oid, pid)
+        .then((response) => {
+            logger.info(`Property ${pid} of ${remote_oid} received` , "AGENT");
+            res.json({error: false, message: response})
+        })
+        .catch((err) => {
+            logger.error(err, "AGENT");
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Set remote property
+     * @param {STRING} id (my VICINITY OID)
+     * @param {STRING} oid (remote VICINITY OID)
+     * @param {STRING} pid (remote VICINITY property)
+     */
+    module.exports.putProperty = function(req, res){
+        let oid = req.params.id;
+        let remote_oid = req.params.oid;
+        let pid = req.params.pid;
+        gtwInterface.putProperty(oid, remote_oid, pid)
+        .then((response) => {
+            logger.info(`Property ${pid} of ${remote_oid} set` , "AGENT");
+            res.json({error: false, message: response})
+        })
+        .catch((err) => {
+            logger.error(err, "AGENT");
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Create event channel
+     * @param {STRING} id (my VICINITY OID)
+     * @param {STRING} eid (name of my channel)
+     */
+    module.exports.activateEventChannel = function(req, res){
+        let oid = req.params.id;
+        let eid = req.params.eid;
+        gtwInterface.activateEventChannel(oid, eid)
+        .then((response) => {
+            logger.info(`Channel ${eid} of ${oid} activated` , "AGENT");
+            res.json({error: false, message: response})
+        })
+        .catch((err) => {
+            logger.error(err, "AGENT");
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Publish event to channel
+     * @param {STRING} id (my VICINITY OID)
+     * @param {STRING} eid (name of my channel)
+     * Body OBJECT JSON
+     */
+    module.exports.publishEvent = function(req, res){
+        let oid = req.params.id;
+        let eid = req.params.eid;
+        let body = req.body;
+        gtwInterface.publishEvent(oid, eid, body)
+        .then((response) => {
+            logger.info(`Message sent to channel ${eid} of ${oid}` , "AGENT");
+            res.json({error: false, message: response})
+        })
+        .catch((err) => {
+            logger.error(err, "AGENT");
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Deactivate event channel
+     * @param {STRING} id (my VICINITY OID)
+     * @param {STRING} eid (name of my channel)
+     */
+    module.exports.deactivateEventChannel = function(req, res){
+        let oid = req.params.id;
+        let eid = req.params.eid;
+        gtwInterface.deactivateEventChannel(oid, eid)
+        .then((response) => {
+            logger.info(`Channel ${eid} of ${oid} deactivated` , "AGENT");
+            res.json({error: false, message: response})
+        })
+        .catch((err) => {
+            logger.error(err, "AGENT");
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Status of remote event channel
+     * @param {STRING} id (my VICINITY OID)
+     * @param {STRING} oid (remote VICINITY OID)
+     * @param {STRING} eid (name of my channel)
+     */
+    module.exports.statusRemoteEventChannel = function(req, res){
+        let oid = req.params.id;
+        let remote_oid = req.params.oid;
+        let eid = req.params.eid;
+        gtwInterface.statusRemoteEventChannel(oid, remote_oid, eid)
+        .then((response) => {
+            logger.info(`Get status of remote channel ${eid} of ${remote_oid}` , "AGENT");
+            res.json({error: false, message: response})
+        })
+        .catch((err) => {
+            logger.error(err, "AGENT");
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Subscribe remote event channel
+     * @param {STRING} id (my VICINITY OID)
+     * @param {STRING} oid (remote VICINITY OID)
+     * @param {STRING} eid (name of my channel)
+     */
+    module.exports.subscribeRemoteEventChannel = function(req, res){
+        let oid = req.params.id;
+        let remote_oid = req.params.oid;
+        let eid = req.params.eid;
+        gtwInterface.subscribeRemoteEventChannel(oid, remote_oid, eid)
+        .then((response) => {
+            logger.info(`Subscribed to remote channel ${eid} of ${remote_oid}` , "AGENT");
+            res.json({error: false, message: response})
+        })
+        .catch((err) => {
+            logger.error(err, "AGENT");
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Unsubscribe remote event channel
+     * @param {STRING} id (my VICINITY OID)
+     * @param {STRING} oid (remote VICINITY OID)
+     * @param {STRING} eid (name of my channel)
+     */
+    module.exports.unsubscribeRemoteEventChannel = function(req, res){
+        let oid = req.params.id;
+        let remote_oid = req.params.oid;
+        let eid = req.params.eid;
+        gtwInterface.unsubscribeRemoteEventChannel(oid, remote_oid, eid)
+        .then((response) => {
+            logger.info(`Unsubscribed to remote channel ${eid} of ${remote_oid}` , "AGENT");
+            res.json({error: false, message: response})
+        })
+        .catch((err) => {
+            logger.error(err, "AGENT");
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+// ***** Gateway proxy *****
+
+    /**
+     * Receive property request from gateway
+     * @param {STRING} id (local VICINITY OID)
+     * @param {STRING} pid (local VICINITY Property)
+     */
+    module.exports.proxyGetProperty = function(req, res){
+        let oid = req.params.id;
+        let pid = req.params.pid;
+        adapter.proxyGetProperty(oid, pid)
+        .then((response) => {
+            res.json(response)
+        })
+        .catch((err) => {
+            // TBD Sent proper error code based on response
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Receive property update request from gateway
+     * @param {STRING} id (local VICINITY OID)
+     * @param {STRING} pid (local VICINITY Property)
+     */
+    module.exports.proxySetProperty = function(req, res){
+        let oid = req.params.id;
+        let pid = req.params.pid;
+        adapter.proxySetProperty(oid, pid)
+        .then((response) => {
+            res.json(response)
+        })
+        .catch((err) => {
+            // TBD Sent proper error code based on response
+            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+        }) 
+    }
+
+    /**
+     * Receive event publication on subscribed channel
+     * @param {STRING} id (local VICINITY OID)
+     * @param {STRING} eid (remote VICINITY Event)
+     */
+    module.exports.proxyGetEvent = function(req, res){
+        // let oid = req.params.id;
+        // let eid = req.params.eid;
+        res.send('Under development');
+    }

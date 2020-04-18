@@ -173,6 +173,27 @@ module.exports.getProperty = async function(oid, remote_oid, pid){
 }
 
  /**
+ * Set a property (PUT)
+ * (Using the credentials of a service or device)
+ * @param {oid: string, remote_oid: string, pid: string}
+ * @return {error: boolean, message: object} 
+ */
+
+module.exports.putProperty = async function(oid, remote_oid, pid){
+    try{
+        let request = new Req();
+        await request.setAuthorization(oid);
+        request.setMethod("PUT");
+        request.setUri('objects/' + remote_oid + '/properties/' + pid);
+        let result = await request.send();
+        request = null;
+        return Promise.resolve(result);
+    } catch(err) {
+        return Promise.reject(err)
+    }
+}
+
+ /**
  * Activate the event channel
  * (Using the credentials of a service or device)
  * @param {oid: string, eid: string}
@@ -300,7 +321,6 @@ module.exports.unsubscribeRemoteEventChannel = async function(oid, remote_oid, e
 
 /**
  * @TBD:
- * Set a property
  * Execute action on remote object
  * Update status of a task
  * Retrieve the status or a return value of a given task

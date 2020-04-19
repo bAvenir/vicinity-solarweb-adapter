@@ -14,17 +14,31 @@ const Log = require('../_classes/logger');
 // Configuration Modes
 const config = require('./configuration');
 const globalMode = config.responseMode;
+const proxyUrl = config.proxyUrl;
 // Modules
 const dummyModule = require('./_modules/dummy');
+const proxyModule = require('./_modules/proxy');
 
 // TBD Include other adapter modules when available
 // TBD Handle events and actions sent by gtw
 
 module.exports.proxyGetProperty = async function(oid, pid){
     let logger = new Log();
+    let result;
     try{
-        // Check if combination of oid + pid exists
-        let result = dummyModule.getProperty(oid, pid);
+        // TBD Check if combination of oid + pid exists
+
+        switch (globalMode) {
+            case 'dummy':
+                result = dummyModule.getProperty(oid, pid);
+                break;
+            case 'proxy':
+                result = await proxyModule.getProperty(oid, pid, proxyUrl, proxyEndpoint);
+                break;
+            default:
+                throw new Error('ADAPTER ERROR: Selected module could not be found');
+        }
+
         logger.debug(`Responded to get property ${pid} of ${oid} in mode ${globalMode}`, "ADAPTER");
         return Promise.resolve(result);
     } catch(err) {
@@ -35,9 +49,21 @@ module.exports.proxyGetProperty = async function(oid, pid){
 
 module.exports.proxySetProperty = async function(oid, pid){
     let logger = new Log();
-    try{
-        // Check if combination of oid + pid exists
-        let result = dummyModule.setProperty(oid, pid);
+    let result;
+    try{ 
+        // TBD Check if combination of oid + pid exists
+
+        switch (globalMode) {
+            case 'dummy':
+                result = dummyModule.setProperty(oid, pid);
+                break;
+            case 'proxy':
+                result = await proxyModule.setProperty(oid, pid, proxyUrl, proxyEndpoint);
+                break;
+            default:
+                throw new Error('ADAPTER ERROR: Selected module could not be found');
+        }
+
         logger.debug(`Responded to set property ${pid} of ${oid} in mode ${globalMode}`, "ADAPTER");
         return Promise.resolve(result);
     } catch(err) {

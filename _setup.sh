@@ -32,9 +32,9 @@ esac
 done
 
 # Kill and remove old proxy containers
-docker kill proxy nodejs-scaffold gateway
-docker rm proxy nodejs-scaffold gateway
-docker rmi nodejs-scaffold
+docker kill proxy bavenir-adapter gateway
+docker rm proxy bavenir-adapter gateway
+docker rmi bavenir-adapter
 docker rm $(docker ps -a -q) # Remove zombi containers
 
 # Start proxy container

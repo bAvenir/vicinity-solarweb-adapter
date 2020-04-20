@@ -1,3 +1,4 @@
+## General
 .env
 node_modules
 package-*
@@ -6,3 +7,11 @@ package-*
 coverage/
 *.example
 test/
+_git-commands.sh
+## Gateway files
+gateway/keystore/*.pem
+gateway/keystore/*.der
+gateway/data/
+gateway/log/
+## Agent Files
+agent/*

@@ -31,6 +31,15 @@ case "$OPTION" in
 esac
 done
 
+# Initial folder setup
+mkdir -p ${MY_PATH}/gateway/log
+mkdir -p ${MY_PATH}/gateway/data
+mkdir -p ${MY_PATH}/agent
+touch ${MY_PATH}/agent/events.json  
+touch ${MY_PATH}/agent/properties.json
+touch ${MY_PATH}/agent/actions.json
+touch ${MY_PATH}/agent/registrations.json
+
 # Kill and remove old proxy containers
 docker kill proxy bavenir-adapter gateway
 docker rm proxy bavenir-adapter gateway

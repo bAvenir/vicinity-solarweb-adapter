@@ -120,6 +120,7 @@ module.exports.discovery = function(req, res){
      * @param {STRING} pid (remote VICINITY property)
      */
     module.exports.getProperty = function(req, res){
+        let logger = new Log();
         let oid = req.params.id;
         let remote_oid = req.params.oid;
         let pid = req.params.pid;
@@ -141,6 +142,7 @@ module.exports.discovery = function(req, res){
      * @param {STRING} pid (remote VICINITY property)
      */
     module.exports.putProperty = function(req, res){
+        let logger = new Log();
         let oid = req.params.id;
         let remote_oid = req.params.oid;
         let pid = req.params.pid;
@@ -161,6 +163,7 @@ module.exports.discovery = function(req, res){
      * @param {STRING} eid (name of my channel)
      */
     module.exports.activateEventChannel = function(req, res){
+        let logger = new Log();
         let oid = req.params.id;
         let eid = req.params.eid;
         gtwInterface.activateEventChannel(oid, eid)
@@ -181,6 +184,7 @@ module.exports.discovery = function(req, res){
      * Body OBJECT JSON
      */
     module.exports.publishEvent = function(req, res){
+        let logger = new Log();
         let oid = req.params.id;
         let eid = req.params.eid;
         let body = req.body;
@@ -201,6 +205,7 @@ module.exports.discovery = function(req, res){
      * @param {STRING} eid (name of my channel)
      */
     module.exports.deactivateEventChannel = function(req, res){
+        let logger = new Log();
         let oid = req.params.id;
         let eid = req.params.eid;
         gtwInterface.deactivateEventChannel(oid, eid)
@@ -221,6 +226,7 @@ module.exports.discovery = function(req, res){
      * @param {STRING} eid (name of my channel)
      */
     module.exports.statusRemoteEventChannel = function(req, res){
+        let logger = new Log();
         let oid = req.params.id;
         let remote_oid = req.params.oid;
         let eid = req.params.eid;
@@ -242,6 +248,7 @@ module.exports.discovery = function(req, res){
      * @param {STRING} eid (name of my channel)
      */
     module.exports.subscribeRemoteEventChannel = function(req, res){
+        let logger = new Log();
         let oid = req.params.id;
         let remote_oid = req.params.oid;
         let eid = req.params.eid;
@@ -263,6 +270,7 @@ module.exports.discovery = function(req, res){
      * @param {STRING} eid (name of my channel)
      */
     module.exports.unsubscribeRemoteEventChannel = function(req, res){
+        let logger = new Log();
         let oid = req.params.id;
         let remote_oid = req.params.oid;
         let eid = req.params.eid;

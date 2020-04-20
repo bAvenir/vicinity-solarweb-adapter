@@ -13,7 +13,8 @@
 const Log = require('../_classes/logger');
 // Configuration Modes
 const config = require('./configuration');
-const globalMode = config.responseMode;
+const responseMode = config.responseMode;
+const collectionMode = config.dataCollectionMode;
 const proxyUrl = config.proxyUrl;
 // Modules
 const dummyModule = require('./_modules/dummy');
@@ -28,18 +29,18 @@ module.exports.proxyGetProperty = async function(oid, pid){
     try{
         // TBD Check if combination of oid + pid exists
 
-        switch (globalMode) {
+        switch (responseMode) {
             case 'dummy':
                 result = dummyModule.getProperty(oid, pid);
                 break;
             case 'proxy':
-                result = await proxyModule.getProperty(oid, pid, proxyUrl, proxyEndpoint);
+                result = await proxyModule.getProperty(oid, pid, proxyUrl);
                 break;
             default:
                 throw new Error('ADAPTER ERROR: Selected module could not be found');
         }
 
-        logger.debug(`Responded to get property ${pid} of ${oid} in mode ${globalMode}`, "ADAPTER");
+        logger.debug(`Responded to get property ${pid} of ${oid} in mode: ${globalMode}`, "ADAPTER");
         return Promise.resolve(result);
     } catch(err) {
         logger.error(err, "ADAPTER")
@@ -53,21 +54,45 @@ module.exports.proxySetProperty = async function(oid, pid){
     try{ 
         // TBD Check if combination of oid + pid exists
 
-        switch (globalMode) {
+        switch (responseMode) {
             case 'dummy':
                 result = dummyModule.setProperty(oid, pid);
                 break;
             case 'proxy':
-                result = await proxyModule.setProperty(oid, pid, proxyUrl, proxyEndpoint);
+                result = await proxyModule.setProperty(oid, pid, proxyUrl);
                 break;
             default:
                 throw new Error('ADAPTER ERROR: Selected module could not be found');
         }
 
-        logger.debug(`Responded to set property ${pid} of ${oid} in mode ${globalMode}`, "ADAPTER");
+        logger.debug(`Responded to set property ${pid} of ${oid} in mode: ${globalMode}`, "ADAPTER");
         return Promise.resolve(result);
     } catch(err) {
         logger.error(err, "ADAPTER")
         return Promise.reject({error: true, message: err})
+    }
+}
+
+
+module.exports.proxyReceiveEvent = async function(oid, eid, body){
+    let logger = new Log();
+    let result;
+    try{ 
+        // TBD Check if combination of oid + pid exists
+
+        switch (collectionMode) {
+            case 'dummy':
+                let event = Object.keys(body).length === 0 ? "Empty body" : JSON.stringify(body);
+                logger.info(`Event received from channel ${eid} of ${oid}: ${event}`, "ADAPTER");
+                break;
+            case 'proxy':
+                result = await proxyModule.receiveEvent(oid, eid, proxyUrl);
+                break;
+            default:
+                throw new Error('ADAPTER ERROR: Selected module could not be found');
+        }
+        logger.debug(`Event received from channel ${eid} of ${oid} in mode: ${collectionMode}`, "ADAPTER");
+    } catch(err) {
+        logger.error(err, "ADAPTER")
     }
 }

@@ -38,6 +38,6 @@ router
   .put('/objects/:id/properties/:pid', controller.proxySetProperty) // receive request to upd property from gtw
   // .post('/objects/:oid/actions/:aid') // receive request to start action
   // .delete('/objects/:oid/actions/:aid') // receive request to stop action
-  .put('/objects/:id/events/:eid', controller.proxyGetEvent); // get event from channel where you are subscribed
+  .put('/objects/:id/events/:eid', controller.proxyReceiveEvent); // get event from channel where you are subscribed
 
   module.exports = router;

@@ -320,8 +320,10 @@ module.exports.discovery = function(req, res){
      * @param {STRING} id (local VICINITY OID)
      * @param {STRING} eid (remote VICINITY Event)
      */
-    module.exports.proxyGetEvent = function(req, res){
-        // let oid = req.params.id;
-        // let eid = req.params.eid;
-        res.send('Under development');
+    module.exports.proxyReceiveEvent = function(req, res){
+        let oid = req.params.id;
+        let eid = req.params.eid;
+        let body = req.body;
+        adapter.proxyReceiveEvent(oid, eid, body);
+        res.send('Event received');
     }

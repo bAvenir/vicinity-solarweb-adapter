@@ -305,7 +305,8 @@ module.exports.discovery = function(req, res){
     module.exports.proxySetProperty = function(req, res){
         let oid = req.params.id;
         let pid = req.params.pid;
-        adapter.proxySetProperty(oid, pid)
+        let body = req.body;
+        adapter.proxySetProperty(oid, pid, body)
         .then((response) => {
             res.json(response)
         })

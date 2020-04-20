@@ -8,7 +8,7 @@
 
  let fun = {};
 
-    fun.getProperty = async function(oid, pid, url, endpoint){
+    fun.getProperty = async function(oid, pid, url){
         try{
             let request = new Req();
             request.setUri(url, '/get');
@@ -20,11 +20,23 @@
         }
     }
 
-    fun.setProperty = async function(oid, pid){
+    fun.setProperty = async function(oid, pid, body, url){
         try{
             let request = new Req();
             request.setUri(url, '/set');
-            request.setBody({oid: oid, pid: pid});
+            request.setBody({oid: oid, pid: pid, body: body});
+            let result = await request.send();
+            return Promise.resolve(result)
+        } catch(err) {
+            return Promise.reject(err);
+        }
+    }
+
+    fun.receiveEvent = async function(oid, eid, body, url){
+        try{
+            let request = new Req();
+            request.setUri(url, '/event');
+            request.setBody({oid: oid, eid: eid, body: body});
             let result = await request.send();
             return Promise.resolve(result)
         } catch(err) {

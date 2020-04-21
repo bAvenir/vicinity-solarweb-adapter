@@ -30,3 +30,13 @@ services:
     - 8181:8181
     # image: gtw-api:latest
     image: bavenir/vicinity-gateway-api:latest
+  cache-db:
+    container_name: cache-db
+    restart: always
+    # ports:
+    # - 6379:6379
+    volumes:
+    - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command:
+    - /usr/local/etc/redis/redis.conf
+    image: redis:buster

@@ -13,6 +13,9 @@ let logger = new Log();
 // Load services
 const agent = require('./src/_agent/agent');
 
+// Set up redis cache db
+let cache = require("./src/_persistance/_modules/redis");
+
 /* WEB SERVER lifecycle
   Start server
   Connection manager wrapping to end connections gracefully
@@ -61,12 +64,15 @@ Area to start services
 */
 async function bootstrap(){
   try{
+    // Start Redis DB
+    cache.start();
+
     // TBD decide what to do if initialization fails (Stop adapter, restart, notify ...)
     await agent.initialize();
 
     // Run other services here
-    //...
-
+    // ...
+    
     logger.info("All services initialized", "MAIN");
 
   } catch(err) {

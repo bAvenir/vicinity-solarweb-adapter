@@ -5,7 +5,7 @@
  */
 
 const config = require('../configuration');
-const fileMgmt = require('../../_utils/fileMgmt');
+const persistance = require('../../_persistance/interface');
 
  module.exports = class Registration{
 
@@ -52,8 +52,7 @@ const fileMgmt = require('../../_utils/fileMgmt');
 
     async storeCredentials(credentials){
         try{
-            let localRegistrations = await fileMgmt.read('./agent/registrations.json');
-            localRegistrations = JSON.parse(localRegistrations);
+            let localRegistrations = await persistance.getConfigurationFile('registrations');
             for(let i = 0, l = credentials.length; i < l; i++){
                 localRegistrations.push({
                     oid: credentials[i].oid,
@@ -63,8 +62,8 @@ const fileMgmt = require('../../_utils/fileMgmt');
                     credentials: 'Basic ' +  Buffer.from(credentials[i].oid + ":" + credentials[i].password).toString('base64')
                 });
             }
-            let result = await fileMgmt.write('./agent/registrations.json', JSON.stringify(localRegistrations));
-            return Promise.resolve(result);
+            await persistance.saveConfigurationFile('registrations', localRegistrations);
+            return Promise.resolve(true);
         } catch(err) {
             return Promise.reject(err);
         }
@@ -102,13 +101,12 @@ const fileMgmt = require('../../_utils/fileMgmt');
     static async removeCredentials(credentials){
         let newCredentials = [];
         try{
-            let localRegistrations = await fileMgmt.read('./agent/registrations.json');
-            localRegistrations = JSON.parse(localRegistrations);
+            let localRegistrations = await persistance.getConfigurationFile('registrations');
             localRegistrations.filter((item) => {
                 if(credentials.indexOf(item.oid) === -1) newCredentials.push(item);
             })
-            let result = await fileMgmt.write('./agent/registrations.json', JSON.stringify(newCredentials));
-            return Promise.resolve(result);
+            await persistance.saveConfigurationFile('registrations', newCredentials);
+            return Promise.resolve(true);
         } catch(err) {
             return Promise.reject(err);
         }
@@ -124,8 +122,7 @@ const fileMgmt = require('../../_utils/fileMgmt');
         let id = identifiers[type];
         try{
             if(!Array.isArray(interactions)) throw new Error(`REGISTRATION ERROR: ${type} is not a valid array`);
-            let localInteractions = await fileMgmt.read('./agent/' + type + '.json');
-            localInteractions = JSON.parse(localInteractions);
+            let localInteractions = await persistance.getConfigurationFile(type);
             // TBD get this from memory in future version !!!
             for(let i = 0, l = interactions.length; i < l; i++){
                 let aux = localInteractions.filter((item) => { return item[id] === interactions[i] });

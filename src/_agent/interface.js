@@ -1,5 +1,5 @@
 /**
-* interfaces.js
+* interface.js
 * Interface to interact with the gateway API
 * Used from external (API) and internal requests
 * @interface
@@ -61,7 +61,7 @@ module.exports.getRegistrations = async function(){
     try{
         let request = new Req();
         await request.setAuthorization(null);
-        request.setUri('agents/' + config.gatewayId + '/objects');
+        request.setUri(`agents/${config.gatewayId}/objects`);
         let result = await request.send();
         request = null;
         return Promise.resolve(result);

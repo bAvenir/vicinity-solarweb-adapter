@@ -6,7 +6,7 @@
 
 const Request = require('../../_classes/request');
 const config = require('../configuration');
-const fileMgmt = require('../../_utils/fileMgmt');
+const persistance = require('../../_persistance/interface');
 
  module.exports = class gtwRequest extends Request{
 
@@ -33,8 +33,7 @@ const fileMgmt = require('../../_utils/fileMgmt');
       try{
         if(oid){
           // TBD load credentials from memory
-          let localRegistrations = await fileMgmt.read('./agent/registrations.json');
-          localRegistrations = JSON.parse(localRegistrations);
+          let localRegistrations = await persistance.getConfigurationFile('registrations');
           let item = localRegistrations.filter((item) => { return item.oid === oid });
           this.addHeader("Authorization", item[0].credentials);
           return Promise.resolve(true);

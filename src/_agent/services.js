@@ -11,25 +11,6 @@ const Regis = require('./_classes/registration');
 let services = {};
 
 /**
- * Get a configuration file and store its contents in memory (REDIS)
- */
-services.processConfig = async function(file, type){
-    let logger = new Log();
-    try{
-        let countRows = file.length;
-        if(countRows>0){
-            //TBD store in memory during runtime
-            return Promise.resolve(true);
-        } else {
-            logger.info("There are no " + type + " available", "AGENT_SERVICES");
-            return Promise.resolve(true);
-        }
-    } catch(err) {
-        return Promise.reject("Problem processing configuration file: " + type + " with error: " + err);
-    }
-}
-
-/**
  * Perform login of all registered objects
  */
 services.doLogins = async function(array){

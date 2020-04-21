@@ -33,7 +33,7 @@ module.exports.proxyGetProperty = async function(oid, pid){
     let logger = new Log();
     let result;
     try{
-        // TBD Check if combination of oid + pid exists
+        // TBD Check if combination of oid + pid exists (persistance.combinationExists)
 
         switch (responseMode) {
             case 'dummy':

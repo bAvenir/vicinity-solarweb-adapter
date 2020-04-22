@@ -22,7 +22,7 @@ module.exports.loadConfigurationFile = async function(fileType){
             //if(config.db === "redis") await storeInMemory(fileType, array);
             return Promise.resolve(array);
         } else {
-            logger.info(`There are no ${fileType} available`, "PERSISTANCE");
+            logger.info(`There are no ${fileType} available to load`, "PERSISTANCE");
             return Promise.resolve(array);
         }
     } catch(err) {

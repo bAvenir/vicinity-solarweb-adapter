@@ -7,7 +7,7 @@ package-*
 coverage/
 *.example
 test/
-_git-commands.sh
+_commands.sh
 ## Gateway files
 gateway/keystore/*.pem
 gateway/keystore/*.der

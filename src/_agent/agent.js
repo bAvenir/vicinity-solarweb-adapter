@@ -38,7 +38,7 @@ module.exports.initialize = async function(){
         let objectsInPlatform = await gateway.getRegistrations();
 
         // Compare local regitrations with platform registrations
-        // TBD Important to control discrepancies!!
+        services.compareLocalAndRemote(registrations, objectsInPlatform);
         
         // Login objects
         await services.doLogins(registrations);

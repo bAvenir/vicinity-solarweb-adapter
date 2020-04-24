@@ -157,17 +157,18 @@ async function _addOid(data){
             throw new Error(`Object with oid ${data.oid} misses some fields, its credentials could not be stored...`);
         }
         let exists = await redis.sismember('registrations', data.oid);
-        if(exists) throw new Error(`Object with oid ${data.oid} is already stored in memory`);
-        todo.push(redis.sadd('registrations', data.oid));
-        todo.push(redis.hset(data.oid, 'credentials', data.credentials));
-        todo.push(redis.hset(data.oid, 'password', data.password));
-        todo.push(redis.hset(data.oid, 'adapterId', data.adapterId));
-        todo.push(redis.hset(data.oid, 'name', data.name));
-        todo.push(redis.hset(data.oid, 'type', data.type));
-        if(data.properties.length) todo.push(redis.hset(data.oid, 'properties', data.properties.toString()));
-        if(data.events.length) todo.push(redis.hset(data.oid, 'events', data.events.toString()));
-        if(data.actions.length) todo.push(redis.hset(data.oid, 'agents', data.agents.toString()));
-        await Promise.all(todo);
+        if(!exists){
+            todo.push(redis.sadd('registrations', data.oid));
+            todo.push(redis.hset(data.oid, 'credentials', data.credentials));
+            todo.push(redis.hset(data.oid, 'password', data.password));
+            todo.push(redis.hset(data.oid, 'adapterId', data.adapterId));
+            todo.push(redis.hset(data.oid, 'name', data.name));
+            todo.push(redis.hset(data.oid, 'type', data.type));
+            if(data.properties.length) todo.push(redis.hset(data.oid, 'properties', data.properties.toString()));
+            if(data.events.length) todo.push(redis.hset(data.oid, 'events', data.events.toString()));
+            if(data.actions.length) todo.push(redis.hset(data.oid, 'agents', data.agents.toString()));
+            await Promise.all(todo);
+        }
         return Promise.resolve(true);
     } catch(err) {
         logger.warn(err, "PERSISTANCE")

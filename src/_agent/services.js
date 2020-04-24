@@ -23,7 +23,7 @@ services.doLogins = async function(array){
             actions.push(gateway.login(array[i].oid));
         }
         await Promise.all(actions);
-        logger.info('All logins were successful', "AGENT_SERVICES");
+        logger.info('All logins were successful', "AGENT");
         return Promise.resolve("Logins were successful");
     } catch(err) {
         return Promise.reject(err);
@@ -42,7 +42,7 @@ services.doLogouts = async function(array){
             actions.push(gateway.logout(array[i].oid));
         }
         await Promise.all(actions);
-        logger.info('All logouts were successful', "AGENT_SERVICES");
+        logger.info('All logouts were successful', "AGENT");
         return Promise.resolve("Logouts were successful");
     } catch(err) {
         return Promise.reject(err);
@@ -70,6 +70,24 @@ services.registerObject = async function(body){
         return Promise.resolve(result.message);
     } catch(err) {
         return Promise.reject(err);
+    }
+}
+
+/**
+ * Compare Local infrastracture with platform
+ * Both should have the same objects registered
+ */
+services.compareLocalAndRemote = function(local, platform){
+    let logger = new Log();
+    try{
+        let oidArray = platform.map((item)=>{ return item.id.info.oid });
+        for(let i = 0, l = local.length; i<l; i++){
+            if(oidArray.indexOf(local[i].oid) === -1) throw new Error('Local and platform objects are not the same')
+        }
+        logger.info('Local and platform objects match!', 'AGENT');
+    } catch(err) {
+        logger.warn(err, 'AGENT');
+        return err;
     }
 }
 

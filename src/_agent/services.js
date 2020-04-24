@@ -7,6 +7,7 @@
 const Log = require('../_classes/logger');
 const gateway = require('./interface');
 const Regis = require('./_classes/registration');
+const persistance = require('../_persistance/interface');
 
 let services = {};
 
@@ -24,6 +25,25 @@ services.doLogins = async function(array){
         await Promise.all(actions);
         logger.info('All logins were successful', "AGENT_SERVICES");
         return Promise.resolve("Logins were successful");
+    } catch(err) {
+        return Promise.reject(err);
+    }
+}
+
+/**
+ * Perform logout of all registered objects
+ */
+services.doLogouts = async function(array){
+    let logger = new Log();
+    try{
+        let actions = [];
+        actions.push(gateway.logout())
+        for(var i = 0, l = array.length; i < l; i++){
+            actions.push(gateway.logout(array[i].oid));
+        }
+        await Promise.all(actions);
+        logger.info('All logouts were successful', "AGENT_SERVICES");
+        return Promise.resolve("Logouts were successful");
     } catch(err) {
         return Promise.reject(err);
     }
@@ -67,5 +87,16 @@ services.removeObject = async function(body){
     }
 }
 
+/**
+ * Store configuration information
+ */
+services.reloadConfigInfo = async function(){
+    try{
+        await persistance.reloadConfigInfo();
+        return Promise.resolve(true);
+    } catch(err) {
+        return Promise.reject(err);
+    }
+}
 
 module.exports = services;

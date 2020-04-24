@@ -31,6 +31,9 @@ module.exports.initialize = async function(){
         let results = await Promise.all(todo);
         let registrations = results[0];
 
+        // Logout objects (restart connection)
+        await services.doLogouts(registrations);
+
         // Get status of registrations in platform
         let objectsInPlatform = await gateway.getRegistrations();
 
@@ -39,6 +42,9 @@ module.exports.initialize = async function(){
         
         // Login objects
         await services.doLogins(registrations);
+
+        // Store configuration info
+        await services.reloadConfigInfo();
 
         // End of initialization
         logger.info('Agent startup completed!', 'AGENT');

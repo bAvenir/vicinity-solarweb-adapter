@@ -6,6 +6,7 @@
 
 const Log = require('../_classes/logger');
 const persistance =  require('../_persistance/interface');
+const agent = require('../_agent/agent')
 
 // ADMINISTRATION endpoints
 
@@ -14,16 +15,14 @@ const persistance =  require('../_persistance/interface');
  */
 module.exports.getConfiguration = function(req, res){
     let logger = new Log();
-    res.send('Under development')
-    // gtwInterface.login()
-    // .then(() => {
-    //     logger.info("Login successful", "ADMIN");
-    //     res.json({error: false, message: "Login successful"})
-    // })
-    // .catch((err) => {
-    //     logger.error(err, "ADMIN");
-    //     res.json({error: true, message: "Something went wrong, check the logs for more info"})
-    // }) 
+    persistance.getConfigInfo()
+    .then((response) => {
+        res.json({error: false, message: response})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    }) 
 }
 
 /**
@@ -31,31 +30,66 @@ module.exports.getConfiguration = function(req, res){
  */
 module.exports.reloadConfiguration = function(req, res){
     let logger = new Log();
-    res.send('Under development')
+    agent.initialize()
+    .then((response) => {
+        res.json({error: false, message: response})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    }) 
 }
 
 module.exports.registrations = function(req, res){
     let id = req.params.id || null; // If null => Use gtw credentials
     let logger = new Log();
-    res.send('Under development')
+    persistance.getConfigDetail('registrations', id)
+    .then((response) => {
+        res.json({error: false, message: response})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
 }
 
 module.exports.properties = function(req, res){
     let id = req.params.id || null; // If null => Use gtw credentials
     let logger = new Log();
-    res.send('Under development')
+    persistance.getConfigDetail('properties', id)
+    .then((response) => {
+        res.json({error: false, message: response})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
 }
 
 module.exports.actions = function(req, res){
     let id = req.params.id || null; // If null => Use gtw credentials
     let logger = new Log();
-    res.send('Under development')
+    persistance.getConfigDetail('actions', id)
+    .then((response) => {
+        res.json({error: false, message: response})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
 }
 
 module.exports.events = function(req, res){
     let id = req.params.id || null; // If null => Use gtw credentials
     let logger = new Log();
-    res.send('Under development')
+    persistance.getConfigDetail('events', id)
+    .then((response) => {
+        res.json({error: false, message: response})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
 }
 
 // HEALTHCHECK endpoints

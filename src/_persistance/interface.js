@@ -130,6 +130,61 @@ module.exports.getInteractionObject = async function(type, id){
 }
 
 /**
+ * Store configuration information
+ * Needs to be removed first 
+ */
+module.exports.reloadConfigInfo = async function(){
+    try{ 
+        await services.removeConfigurationInfo();
+        await services.addConfigurationInfo();
+        return Promise.resolve(true);
+    } catch(err) {
+        return Promise.reject("Problem storing configuration information...")
+    }
+}
+
+/**
+ * Get configuration information
+ * From memory
+ */
+module.exports.getConfigInfo = async function(){
+    try{
+        await services.removeConfigurationInfo();
+        await services.addConfigurationInfo();
+        let result = await redis.hgetall('configuration');
+        return Promise.resolve(result);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject("Problem retrieving configuration information...")
+    }
+}
+
+/**
+ * Get Interactions or registrations array
+ * If id is provided get the related object
+ * From memory
+ * @param {string} type registrations or interaction type
+ * @param {string} id OPTIONAL
+ */
+module.exports.getConfigDetail = async function(type, id){
+    let result;
+    try{
+        if(id){
+            let hkey = type === 'registrations' ? id : `${type}:${id}`;
+            result = await redis.hgetall(hkey);
+            if(type !== 'registrations' && result) result = JSON.parse(result.body);
+        } else {
+            result = await redis.smembers(type);
+        }
+        return Promise.resolve(result);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject("Problem retrieving configuration details...")
+    }
+}
+
+
+/**
  * Check if incoming request is valid
  * Oid exists in infrastructure and has pid 
  */

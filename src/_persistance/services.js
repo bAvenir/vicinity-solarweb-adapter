@@ -56,11 +56,61 @@ fun.removeOid = async function(oid){
     }
 }
 
-fun.getInteractionObject = async function(type, oid){
+/**
+ * Get an interaction previously stored
+ * Interactions are user defined
+ * @param {string} type (preperties, actions, events)
+ * @param {string} id interaction name
+ * @returns {object} JSON with TD interaction schema
+ */
+fun.getInteractionObject = async function(type, id){
     let logger = new Log();
     try{ 
-        let obj = await redis.hget(type + ":" + oid, "body");
+        let obj = await redis.hget(type + ":" + id, "body");
         return Promise.resolve(obj);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+/**
+ * Adds configuration of agent info
+ * To memory
+ */
+fun.addConfigurationInfo = async function(){
+    let logger = new Log();
+    try{ 
+        let d = new Date();
+        let numregis = await redis.scard('registrations');
+        let numprops = await redis.scard('properties');
+        let numactions = await redis.scard('actions');
+        let numevents = await redis.scard('events');
+        await redis.hset("configuration", "date", d.toISOString());
+        await redis.hset("configuration", "registrations", numregis);
+        await redis.hset("configuration", "properties", numprops);
+        await redis.hset("configuration", "actions", numactions);
+        await redis.hset("configuration", "events", numevents);
+        return Promise.resolve(true);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+ /**
+ * Removes configuration of agent info
+ * From memory
+ */
+fun.removeConfigurationInfo = async function(){
+    let logger = new Log();
+    try{ 
+        await redis.hdel("configuration", "date");
+        await redis.hdel("configuration", "registrations");
+        await redis.hdel("configuration", "properties");
+        await redis.hdel("configuration", "actions");
+        await redis.hdel("configuration", "events");
+        return Promise.resolve(true);
     } catch(err) {
         logger.error(err, "PERSISTANCE")
         return Promise.reject(false)
@@ -69,6 +119,11 @@ fun.getInteractionObject = async function(type, oid){
 
 // Private functions
 
+/**
+ * Stores user defined interactions in memory
+ * @param {string} type (preperties, actions, events)
+ * @param {array} array interactions array with JSONs
+ */
 async function _storeInteractions(type, array){
     let logger = new Log();
     let interaction =  interactions[type];
@@ -99,8 +154,10 @@ async function _addOid(data){
     try{ 
         let todo = [];
         if(!data.credentials || !data.password || !data.adapterId || !data.name || !data.type ){
-            throw new Error("Object with oid " + data.oid + " misses some fields, its credentials could not be stored...");
+            throw new Error(`Object with oid ${data.oid} misses some fields, its credentials could not be stored...`);
         }
+        let exists = await redis.sismember('registrations', data.oid);
+        if(exists) throw new Error(`Object with oid ${data.oid} is already stored in memory`);
         todo.push(redis.sadd('registrations', data.oid));
         todo.push(redis.hset(data.oid, 'credentials', data.credentials));
         todo.push(redis.hset(data.oid, 'password', data.password));

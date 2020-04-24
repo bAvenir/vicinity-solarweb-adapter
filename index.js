@@ -14,7 +14,7 @@ let logger = new Log();
 const agent = require('./src/_agent/agent');
 
 // Set up redis cache db
-let cache = require("./src/_persistance/_modules/redis/interface");
+let cache = require("./src/_persistance/_modules/redis");
 
 /* WEB SERVER lifecycle
   Start server

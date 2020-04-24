@@ -32,10 +32,9 @@ const persistance = require('../../_persistance/interface');
     async setAuthorization(oid){
       try{
         if(oid){
-          // TBD load credentials from memory
-          let localRegistrations = await persistance.getConfigurationFile('registrations');
-          let item = localRegistrations.filter((item) => { return item.oid === oid });
-          this.addHeader("Authorization", item[0].credentials);
+          let credentials = await persistance.getCredentials(oid);
+          if(!credentials) throw new Error(`Missing authorization for object ${oid}`)
+          this.addHeader("Authorization", credentials);
           return Promise.resolve(true);
         } else {
           this.addHeader("Authorization", config.gatewayCredentials);

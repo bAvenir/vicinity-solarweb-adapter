@@ -22,8 +22,8 @@ services.doLogins = async function(array){
             actions.push(gateway.login(array[i].oid));
         }
         await Promise.all(actions);
-        logger.info('All logins were successful');
-        return Promise.resolve("Logins were successful", "AGENT_SERVICES");
+        logger.info('All logins were successful', "AGENT_SERVICES");
+        return Promise.resolve("Logins were successful");
     } catch(err) {
         return Promise.reject(err);
     }
@@ -31,13 +31,15 @@ services.doLogins = async function(array){
 
 /**
  * Register object in platform
+ * Only 1 by 1 - No multiple registration accepted
  */
 services.registerObject = async function(body){
     let registration = new Regis();
     try{
         let td = await registration.buildTD(body);
         let result = await gateway.postRegistrations(td);
-        await registration.storeCredentials(result.message);
+        if(result.message[0].error) throw new Error("Platform parsing failed, please revise error: " + JSON.stringify(result.message[0].error));
+        await registration.storeCredentials(result.message[0]);
         // Login new objects
         let actions = [];
         for(var i = 0, l = result.message.length; i < l; i++){

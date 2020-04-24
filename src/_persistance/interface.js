@@ -6,7 +6,8 @@
 
 const Log = require('../_classes/logger');
 const fileMgmt = require('./_modules/fileMgmt');
-const config = require('./configuration');
+const redis = require('./_modules/redis');
+const services = require('./services');
 
 /**
  * Loads in memory configuration files
@@ -18,8 +19,7 @@ module.exports.loadConfigurationFile = async function(fileType){
         let array = JSON.parse(file);
         let countRows = array.length;
         if(countRows>0){
-            //TBD store in memory during runtime
-            //if(config.db === "redis") await storeInMemory(fileType, array);
+            await services.storeInMemory(fileType, array);
             return Promise.resolve(array);
         } else {
             logger.info(`There are no ${fileType} available to load`, "PERSISTANCE");
@@ -33,12 +33,11 @@ module.exports.loadConfigurationFile = async function(fileType){
 
 /**
  * Get configuration file
- * TBD Load from memory if available
+ * From file system
  */
 module.exports.getConfigurationFile = async function(fileType){
     let logger = new Log();
     try{ 
-        // TBD if(config.db === "redis") let array = await findOidPid(fileType);
         let file = await fileMgmt.read(`./agent/${fileType}.json`);
         let array = JSON.parse(file);
         return Promise.resolve(array);
@@ -48,16 +47,82 @@ module.exports.getConfigurationFile = async function(fileType){
     }
 }
 
+
 /**
  * Save registrations or interactions to file
  */
 module.exports.saveConfigurationFile = async function(fileType, data){
     let logger = new Log();
     try{ 
-        // TBD Store in memory too (Append new values)
-        //if(config.db === "redis") await storeInMemory(fileType, array);
+        await services.storeInMemory(fileType, data);
         await fileMgmt.write(`./agent/${fileType}.json`, JSON.stringify(data));
         return Promise.resolve(true);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+/**
+ * Get credentials
+ * From memory
+ */
+module.exports.getCredentials = async function(oid){
+    let logger = new Log();
+    try{ 
+        let credentials = await redis.hget(oid, 'credentials');
+        return Promise.resolve(credentials);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+
+/**
+ * Add new OIDs - VICINTY OBJECTS
+ * To memory
+ */
+module.exports.addCredentials = async function(oids){
+    let logger = new Log();
+    try{ 
+        for(let i = 0, l = oids.length; i<l; i++){
+            await services.addOid(oids[i]);
+        }
+        return Promise.resolve(true);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+/**
+ * Remove old OIDs - VICINTY OBJECTS
+ * From memory
+ * @param {array} oids VICINITY IDs
+ */
+module.exports.removeCredentials = async function(oids){
+    let logger = new Log();
+    try{ 
+        for(let i = 0, l = oids.length; i<l; i++){
+            await services.removeOid(oids[i]);
+        }
+        return Promise.resolve(true);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+/**
+ * Get interaction object
+ * From memory
+ */
+module.exports.getInteractionObject = async function(type, id){
+    let logger = new Log();
+    try{ 
+        let obj = await services.getInteractionObject(type, id);
+        return Promise.resolve(obj);
     } catch(err) {
         logger.error(err, "PERSISTANCE")
         return Promise.reject(false)

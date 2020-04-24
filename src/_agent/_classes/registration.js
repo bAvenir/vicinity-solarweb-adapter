@@ -6,6 +6,11 @@
 
 const config = require('../configuration');
 const persistance = require('../../_persistance/interface');
+const interactions = {
+    "properties" : {"id": "pid", "does": "monitors"},
+    "actions" : {"id": "aid", "does": "affects"},
+    "events" : {"id": "eid", "does": "monitors"}
+}
 
  module.exports = class Registration{
 
@@ -50,25 +55,30 @@ const persistance = require('../../_persistance/interface');
         }
     }
 
-    async storeCredentials(credentials){
+    /**
+     * Receives newly registered objects in the platform
+     * They need to be added to the agent too
+     * @param {object} registration
+     */
+    async storeCredentials(registration){
         try{
             let localRegistrations = await persistance.getConfigurationFile('registrations');
-            for(let i = 0, l = credentials.length; i < l; i++){
-                localRegistrations.push({
-                    oid: credentials[i].oid,
-                    name: credentials[i].name,
-                    password: credentials[i].password,
-                    adapterId: this.td['adapter-id'],
-                    credentials: 'Basic ' +  Buffer.from(credentials[i].oid + ":" + credentials[i].password).toString('base64')
-                });
-            }
+            localRegistrations.push({
+                oid: registration.oid,
+                name: this.td.name,
+                password: registration.password,
+                adapterId: this.td['adapter-id'],
+                type: this.td.type,
+                properties: this._getInteractionId(this.td.properties, 'properties'),
+                actions: this._getInteractionId(this.td.actions, 'actions'),
+                events: this._getInteractionId(this.td.events, 'events'),
+                credentials: 'Basic ' +  Buffer.from(registration.oid + ":" + registration.password).toString('base64')
+            });
             await persistance.saveConfigurationFile('registrations', localRegistrations);
             return Promise.resolve(true);
         } catch(err) {
             return Promise.reject(err);
         }
-
-        // TBD store credentials in memory also!!!
     }
 
     // Static Methods
@@ -97,37 +107,36 @@ const persistance = require('../../_persistance/interface');
         }
     }
 
-
-    static async removeCredentials(credentials){
-        let newCredentials = [];
+    /**
+     * Receives all oids that were removed form the platform
+     * They need to be removed from the agent too
+     * @param {array} unregistrations 
+     */
+    static async removeCredentials(unregistrations){
+        let newRegistrations = [];
         try{
             let localRegistrations = await persistance.getConfigurationFile('registrations');
             localRegistrations.filter((item) => {
-                if(credentials.indexOf(item.oid) === -1) newCredentials.push(item);
+                if(unregistrations.indexOf(item.oid) === -1) newRegistrations.push(item);
             })
-            await persistance.saveConfigurationFile('registrations', newCredentials);
+            await persistance.removeCredentials(unregistrations); // Remove from memory unregistered objects
+            await persistance.saveConfigurationFile('registrations', newRegistrations);
             return Promise.resolve(true);
         } catch(err) {
             return Promise.reject(err);
         }
-
-        // TBD remove credentials from memory also!!!
     }
 
     // Private Methods
 
     async _checkInteractionPatterns(interactions, type){
         let interactionsArray = [];
-        let identifiers = {'properties': 'pid', 'events': 'eid', 'actions': 'aid'};
-        let id = identifiers[type];
         try{
             if(!Array.isArray(interactions)) throw new Error(`REGISTRATION ERROR: ${type} is not a valid array`);
-            let localInteractions = await persistance.getConfigurationFile(type);
-            // TBD get this from memory in future version !!!
             for(let i = 0, l = interactions.length; i < l; i++){
-                let aux = localInteractions.filter((item) => { return item[id] === interactions[i] });
-                if(aux[0] == null) throw new Error(`REGISTRATION ERROR: Interaction: ${interactions[i]} could not be found in ${type}`); 
-                interactionsArray.push(aux[0]);
+                let aux = await persistance.getInteractionObject(type, interactions[i]);
+                if(aux == null) throw new Error(`REGISTRATION ERROR: Interaction: ${interactions[i]} could not be found in ${type}`); 
+                interactionsArray.push(JSON.parse(aux));
             }
             // TBD If there are events --> Create the channel!!!
             return Promise.resolve(interactionsArray);
@@ -142,4 +151,16 @@ const persistance = require('../../_persistance/interface');
         if(!data.adapterId) throw new Error('REGISTRATION ERROR: Missing adapterId');
     }
 
+    /**
+     * Return only pid/aid/eid of interactions
+     * @param {array} array 
+     */
+    _getInteractionId(array, type){
+        let id = interactions[type]['id'];
+        let result = [];
+        for(let i=0, l=array.length; i<l; i++){
+            result.push(array[i][id]);
+        }
+        return result;
+    }
  }

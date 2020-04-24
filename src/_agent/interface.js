@@ -64,7 +64,7 @@ module.exports.getRegistrations = async function(){
         request.setUri(`agents/${config.gatewayId}/objects`);
         let result = await request.send();
         request = null;
-        return Promise.resolve(result);
+        return Promise.resolve(result.message);
     } catch(err) {
         return Promise.reject(err)
     }

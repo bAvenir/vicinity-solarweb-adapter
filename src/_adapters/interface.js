@@ -46,7 +46,7 @@ module.exports.proxyGetProperty = async function(oid, pid){
                 throw new Error('ADAPTER ERROR: Selected module could not be found');
         }
 
-        logger.debug(`Responded to get property ${pid} of ${oid} in mode: ${globalMode}`, "ADAPTER");
+        logger.debug(`Responded to get property ${pid} of ${oid} in mode: ${responseMode}`, "ADAPTER");
         return Promise.resolve(result);
     } catch(err) {
         logger.error(err, "ADAPTER")
@@ -77,7 +77,7 @@ module.exports.proxySetProperty = async function(oid, pid, body){
                 throw new Error('ADAPTER ERROR: Selected module could not be found');
         }
 
-        logger.debug(`Responded to set property ${pid} of ${oid} in mode: ${globalMode}`, "ADAPTER");
+        logger.debug(`Responded to set property ${pid} of ${oid} in mode: ${responseMode}`, "ADAPTER");
         return Promise.resolve(result);
     } catch(err) {
         logger.error(err, "ADAPTER")

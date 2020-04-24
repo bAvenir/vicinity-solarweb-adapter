@@ -327,4 +327,23 @@ module.exports.unsubscribeRemoteEventChannel = async function(oid, remote_oid, e
  * Cancel a task in progress
  */
 
+// HealthCheck
 
+/**
+ * Login an object in VICINITY
+ * @param {oid: string}
+ * @return {error: boolean, message: string} 
+ */
+
+module.exports.health = async function(){
+    try{
+        let request = new Req();
+        await request.setAuthorization();
+        request.setUri('objects/login');
+        let result = await request.send();
+        request = null;
+        return Promise.resolve('OK');
+    } catch(err) {
+        return Promise.resolve(err)
+    }
+}

@@ -60,6 +60,19 @@ module.exports = {
         logger.info("Connected successfully to Redis!!", "REDIS");
     });
   },
+  health: () => {
+    return new Promise(function (resolve, reject) {
+      client.ping(function(err, reply) {
+        if (err) {
+          logger.error(err, "REDIS");
+          reject(false);
+        } else {
+          logger.debug("Redis is ready: " + reply, "REDIS");
+          resolve(true);
+        }
+      });
+    });
+  },
   // SETS
   /**
    * Adds item to set

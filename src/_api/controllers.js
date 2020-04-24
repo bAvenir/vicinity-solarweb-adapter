@@ -6,7 +6,8 @@
 
 const Log = require('../_classes/logger');
 const persistance =  require('../_persistance/interface');
-const agent = require('../_agent/agent')
+const agent = require('../_agent/agent');
+const gateway = require('../_agent/interface');
 
 // ADMINISTRATION endpoints
 
@@ -94,7 +95,8 @@ module.exports.events = function(req, res){
 
 // HEALTHCHECK endpoints
 
-  module.exports.healthcheck = function(req, res){
-    let logger = new Log();
-    res.send('Under development')
+  module.exports.healthcheck = async function(req, res){
+    let redisHealth = await persistance.redisHealth();
+    let gtwHealth = await gateway.health();
+    res.json({error: false, message: {'Redis' : redisHealth, 'Gateway': gtwHealth, 'NodeApp': 'OK'} });
 }

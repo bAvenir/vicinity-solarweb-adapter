@@ -183,6 +183,17 @@ module.exports.getConfigDetail = async function(type, id){
     }
 }
 
+/**
+ * Check Redis availability
+ */
+module.exports.redisHealth = async function(){
+    try{
+        await redis.health();
+        return Promise.resolve('OK');
+    } catch(err){
+        return Promise.resolve(false);
+    }
+}
 
 /**
  * Check if incoming request is valid

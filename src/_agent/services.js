@@ -7,7 +7,6 @@
 const Log = require('../_classes/logger');
 const gateway = require('./interface');
 const Regis = require('./_classes/registration');
-const persistance = require('../_persistance/interface');
 
 let services = {};
 
@@ -74,6 +73,20 @@ services.registerObject = async function(body){
 }
 
 /**
+ * Remove object from platform
+ */
+services.removeObject = async function(body){
+    try{
+        let wrapper = Regis.addRemovalWrapper(body.oids);
+        let result = await gateway.removeRegistrations(wrapper);
+        await Regis.removeCredentials(body.oids);
+        return Promise.resolve(result.message.message);
+    } catch(err) {
+        return Promise.reject(err);
+    }
+}
+
+/**
  * Compare Local infrastracture with platform
  * Both should have the same objects registered
  */
@@ -92,28 +105,20 @@ services.compareLocalAndRemote = function(local, platform){
 }
 
 /**
- * Remove object from platform
+ * Activate event channels
  */
-services.removeObject = async function(body){
+services.activateEventChannels = async function(oid, events){
+    let logger = new Log();
     try{
-        let wrapper = Regis.addRemovalWrapper(body.oids);
-        let result = await gateway.removeRegistrations(wrapper);
-        await Regis.removeCredentials(body.oids);
-        return Promise.resolve(result.message.message);
-    } catch(err) {
-        return Promise.reject(err);
-    }
-}
-
-/**
- * Store configuration information
- */
-services.reloadConfigInfo = async function(){
-    try{
-        await persistance.reloadConfigInfo();
+        let todo = [];
+        for(let i = 0, l = events.length; i<l; i++){
+            todo.push(gateway.activateEventChannel(oid, events[i]));
+        }
+        await Promise.all(todo);
         return Promise.resolve(true);
     } catch(err) {
-        return Promise.reject(err);
+        logger.warn('Event channels were not created, check gateway connection', 'AGENT');
+        return Promise.resolve(false);
     }
 }
 

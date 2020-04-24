@@ -24,15 +24,13 @@ module.exports.initialize = async function(){
         
         // Loads and stores registrations and interaction pattern files
         let todo = [];
+         // IF YOU REMOVE THE LINE BELOW, REMEMBER TO INIT EVENT CHANNELS SOME OTHER WAY
         todo.push(persistance.loadConfigurationFile("registrations"));
         todo.push(persistance.loadConfigurationFile("properties"));
         // todo.push(persistance.loadConfigurationFile("actions"));
         todo.push(persistance.loadConfigurationFile("events"));
         let results = await Promise.all(todo);
         let registrations = results[0];
-
-        // Logout objects (restart connection)
-        await services.doLogouts(registrations);
 
         // Get status of registrations in platform
         let objectsInPlatform = await gateway.getRegistrations();
@@ -44,7 +42,7 @@ module.exports.initialize = async function(){
         await services.doLogins(registrations);
 
         // Store configuration info
-        await services.reloadConfigInfo();
+        await persistance.reloadConfigInfo();
 
         // End of initialization
         logger.info('Agent startup completed!', 'AGENT');

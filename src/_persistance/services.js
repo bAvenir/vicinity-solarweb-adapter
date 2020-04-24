@@ -4,6 +4,7 @@
 */
 
 const redis = require('./_modules/redis');
+const gateway = require('../_agent/services');
 const Log = require('../_classes/logger');
 // Define possible interactions
 const interactions = {
@@ -169,6 +170,7 @@ async function _addOid(data){
             if(data.actions.length) todo.push(redis.hset(data.oid, 'agents', data.agents.toString()));
             await Promise.all(todo);
         }
+        if(data.events.length) await gateway.activateEventChannels(data.oid, data.events);
         return Promise.resolve(true);
     } catch(err) {
         logger.warn(err, "PERSISTANCE")

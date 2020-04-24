@@ -11,6 +11,7 @@
 
 // Import logger
 const Log = require('../_classes/logger');
+const persistance =  require('../_persistance/interface');
 // Configuration Modes
 const config = require('./configuration');
 const responseMode = config.responseMode;
@@ -33,8 +34,7 @@ module.exports.proxyGetProperty = async function(oid, pid){
     let logger = new Log();
     let result;
     try{
-        // TBD Check if combination of oid + pid exists (persistance.combinationExists)
-
+        await persistance.combinationExists(oid, pid);
         switch (responseMode) {
             case 'dummy':
                 result = dummyModule.getProperty(oid, pid);
@@ -50,7 +50,7 @@ module.exports.proxyGetProperty = async function(oid, pid){
         return Promise.resolve(result);
     } catch(err) {
         logger.error(err, "ADAPTER")
-        return Promise.reject({error: true, message: err})
+        return Promise.reject({error: true, message: err.message})
     }
 }
 
@@ -65,8 +65,7 @@ module.exports.proxySetProperty = async function(oid, pid, body){
     let logger = new Log();
     let result;
     try{ 
-        // TBD Check if combination of oid + pid exists
-
+        await persistance.combinationExists(oid, pid);
         switch (responseMode) {
             case 'dummy':
                 result = dummyModule.setProperty(oid, pid);
@@ -82,7 +81,7 @@ module.exports.proxySetProperty = async function(oid, pid, body){
         return Promise.resolve(result);
     } catch(err) {
         logger.error(err, "ADAPTER")
-        return Promise.reject({error: true, message: err})
+        return Promise.reject({error: true, message: err.message})
     }
 }
 

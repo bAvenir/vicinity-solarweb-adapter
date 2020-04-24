@@ -197,9 +197,17 @@ module.exports.redisHealth = async function(){
 
 /**
  * Check if incoming request is valid
- * Oid exists in infrastructure and has pid 
+ * Oid exists in infrastructure and has pid
  */
 module.exports.combinationExists = async function(oid, pid){
-    // TBD if(config.db === "redis") await findOidPid(fileType, array);
-    return(true)
+    try{
+        let exists = await redis.sismember('registrations', oid);
+        if(!exists) throw new Error(`Object ${oid} does not exist in infrastructure`);
+        let properties = await redis.hget(oid, 'properties');
+        let p = properties.split(',');
+        if(p.indexOf(pid) === -1 ) throw new Error(`Object ${oid} does not have property ${pid}`);
+        return Promise.resolve(true);
+    } catch(err){
+        return Promise.reject(err);
+    }    
 }

@@ -300,8 +300,7 @@ module.exports.discovery = function(req, res){
             res.json(response)
         })
         .catch((err) => {
-            // TBD Sent proper error code based on response
-            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+            res.send(err)
         }) 
     }
 
@@ -319,8 +318,7 @@ module.exports.discovery = function(req, res){
             res.json(response)
         })
         .catch((err) => {
-            // TBD Sent proper error code based on response
-            res.json({error: true, message: "Something went wrong, check the logs for more info"})
+            res.json(err)
         }) 
     }
 

@@ -32,8 +32,8 @@ module.exports.getConfiguration = function(req, res){
 module.exports.reloadConfiguration = function(req, res){
     let logger = new Log();
     agent.initialize()
-    .then((response) => {
-        res.json({error: false, message: response})
+    .then(() => {
+        res.json({error: false, message: 'DONE'})
     })
     .catch((err) => {
         logger.error(err, "ADMIN");

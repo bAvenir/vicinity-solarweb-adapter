@@ -64,7 +64,7 @@ module.exports.saveConfigurationFile = async function(fileType, data){
 }
 
 /**
- * Get credentials
+ * Get credentials for one OID
  * From memory
  */
 module.exports.getCredentials = async function(oid){
@@ -72,6 +72,26 @@ module.exports.getCredentials = async function(oid){
     try{ 
         let credentials = await redis.hget(oid, 'credentials');
         return Promise.resolve(credentials);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+/**
+ * Get all OIDs - VICINTY OBJECTS
+ * From memory
+ */
+module.exports.getLocalObjects = async function(oid){
+    let logger = new Log();
+    try{ 
+        let registrations = [];
+        if(oid){
+            registrations = await redis.hgetall(oid);
+        } else {
+            registrations = await redis.smembers('registrations');
+        }
+        return Promise.resolve(registrations);
     } catch(err) {
         logger.error(err, "PERSISTANCE")
         return Promise.reject(false)

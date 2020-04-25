@@ -13,6 +13,8 @@ const persistance = require('../_persistance/interface');
 
 /**
  * Initialization process of the agent module
+ * Loads from memory credentials of registered objects
+ * Performs actions necessary to restart/init agent
  */
 module.exports.initialize = async function(){
     let logger = new Log();
@@ -22,24 +24,25 @@ module.exports.initialize = async function(){
         // Check current configuration 
         if(!config.gatewayId || !config.gatewayPwd) throw new Error('Missing gateway id or credentials...');
         
-        // Loads and stores registrations and interaction pattern files
-        let todo = [];
-         // IF YOU REMOVE THE LINE BELOW, REMEMBER TO INIT EVENT CHANNELS SOME OTHER WAY
-        todo.push(persistance.loadConfigurationFile("registrations"));
-        todo.push(persistance.loadConfigurationFile("properties"));
-        // todo.push(persistance.loadConfigurationFile("actions"));
-        todo.push(persistance.loadConfigurationFile("events"));
-        let results = await Promise.all(todo);
-        let registrations = results[0];
+        // Get objects OIDs stored locally
+        let registrations = await persistance.getLocalObjects();
+
+        // Login objects
+        await services.doLogins(registrations);
 
         // Get status of registrations in platform
         let objectsInPlatform = await gateway.getRegistrations();
 
         // Compare local regitrations with platform registrations
         services.compareLocalAndRemote(registrations, objectsInPlatform);
-        
-        // Login objects
-        await services.doLogins(registrations);
+
+        // Initialize event channels
+        for(let i = 0, l = registrations.length; i<l; i++){
+            let thing = await persistance.getLocalObjects(registrations[i]);
+            let events = thing.events || [];
+            if(events.length > 0) await services.activateEventChannels(registrations[i], events);
+        }
+        logger.info('All event channels created!', 'AGENT');
 
         // Store configuration info
         await persistance.reloadConfigInfo();
@@ -51,5 +54,37 @@ module.exports.initialize = async function(){
         logger.error(err, 'AGENT');
         return Promise.reject(false);
     }
-
 }
+
+/**
+ * Stops gateway connections before killing adapter app
+ */
+module.exports.stop = async function(){
+    let logger = new Log();
+    try{
+        // Get objects OIDs stored locally
+        let registrations = await persistance.getLocalObjects();
+        // Do logouts
+        await services.doLogouts(registrations);
+        logger.info("Gateway connections closed", 'AGENT');
+        return Promise.resolve(true);
+    } catch(err) {
+        logger.error(err, 'AGENT');
+        return Promise.reject(false);
+    }
+}
+
+/**
+ * Import configuration files to memory
+ * Does not overwrite, only loads interactions or registrations
+ * not existing previously
+ * Use delete endpoints to remove interactions or registrations 
+ */    
+module.exports.importToFile = async function(){}
+
+/**
+ * Saves to file all the memory
+ * Additional backup possibility
+ * Creates 4 files: 1xRegistrations + 3xInteractions
+ */
+module.exports.exportToFile = async function(){}

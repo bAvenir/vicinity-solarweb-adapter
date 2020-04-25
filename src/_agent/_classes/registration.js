@@ -133,9 +133,10 @@ const interactions = {
         let interactionsArray = [];
         try{
             if(!Array.isArray(interactions)) throw new Error(`REGISTRATION ERROR: ${type} is not a valid array`);
-            for(let i = 0, l = interactions.length; i < l; i++){
-                let aux = await persistance.getInteractionObject(type, interactions[i]);
-                if(aux == null) throw new Error(`REGISTRATION ERROR: Interaction: ${interactions[i]} could not be found in ${type}`); 
+            let uniqueInteractions = [ ...new Set(interactions)]; // Ensure interaction ids registered are unique 
+            for(let i = 0, l = uniqueInteractions.length; i < l; i++){
+                let aux = await persistance.getInteractionObject(type, uniqueInteractions[i]);
+                if(aux == null) throw new Error(`REGISTRATION ERROR: Interaction: ${uniqueInteractions[i]} could not be found in ${type}`); 
                 interactionsArray.push(JSON.parse(aux));
             }
             // TBD If there are events --> Create the channel!!!

@@ -16,10 +16,10 @@ let services = {};
 services.doLogins = async function(array){
     let logger = new Log();
     try{
+        await gateway.login(); // Start always the gateway first
         let actions = [];
-        actions.push(gateway.login())
         for(var i = 0, l = array.length; i < l; i++){
-            actions.push(gateway.login(array[i].oid));
+            actions.push(gateway.login(array[i]));
         }
         await Promise.all(actions);
         logger.info('All logins were successful', "AGENT");
@@ -36,11 +36,11 @@ services.doLogouts = async function(array){
     let logger = new Log();
     try{
         let actions = [];
-        actions.push(gateway.logout())
         for(var i = 0, l = array.length; i < l; i++){
-            actions.push(gateway.logout(array[i].oid));
+            actions.push(gateway.logout(array[i]));
         }
         await Promise.all(actions);
+        await gateway.logout(); // Stop always the gateway last
         logger.info('All logouts were successful', "AGENT");
         return Promise.resolve("Logouts were successful");
     } catch(err) {
@@ -95,7 +95,7 @@ services.compareLocalAndRemote = function(local, platform){
     try{
         let oidArray = platform.map((item)=>{ return item.id.info.oid });
         for(let i = 0, l = local.length; i<l; i++){
-            if(oidArray.indexOf(local[i].oid) === -1) throw new Error('Local and platform objects are not the same')
+            if(oidArray.indexOf(local[i]) === -1) throw new Error('Local and platform objects are not the same')
         }
         logger.info('Local and platform objects match!', 'AGENT');
     } catch(err) {
@@ -110,6 +110,7 @@ services.compareLocalAndRemote = function(local, platform){
 services.activateEventChannels = async function(oid, events){
     let logger = new Log();
     try{
+        if(typeof events === 'string') events = events.split(',');
         let todo = [];
         for(let i = 0, l = events.length; i<l; i++){
             todo.push(gateway.activateEventChannel(oid, events[i]));

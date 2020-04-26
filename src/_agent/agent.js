@@ -80,11 +80,25 @@ module.exports.stop = async function(){
  * not existing previously
  * Use delete endpoints to remove interactions or registrations 
  */    
-module.exports.importToFile = async function(){}
+module.exports.importFromFile = async function(type){
+    try{
+        await persistance.loadConfigurationFile(type);
+        return Promise.resolve(true);
+    }catch(err){
+        return Promise.reject(false);
+    }
+}
 
 /**
  * Saves to file all the memory
  * Additional backup possibility
- * Creates 4 files: 1xRegistrations + 3xInteractions
+ * Can create 4 different files: 1xRegistrations + 3xInteractions
  */
-module.exports.exportToFile = async function(){}
+module.exports.exportToFile = async function(type){
+    try{
+        await persistance.saveConfigurationFile(type);
+        return Promise.resolve(true);
+    }catch(err){
+        return Promise.reject(false);
+    }
+}

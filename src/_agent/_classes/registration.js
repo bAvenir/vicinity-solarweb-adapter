@@ -56,14 +56,13 @@ const interactions = {
     }
 
     /**
-     * Receives newly registered objects in the platform
+     * Receives newly registered object in the platform
      * They need to be added to the agent too
      * @param {object} registration
      */
     async storeCredentials(registration){
         try{
-            let localRegistrations = await persistance.getConfigurationFile('registrations');
-            localRegistrations.push({
+            let newRegistration = {
                 oid: registration.oid,
                 name: this.td.name,
                 password: registration.password,
@@ -73,8 +72,22 @@ const interactions = {
                 actions: this._getInteractionId(this.td.actions, 'actions'),
                 events: this._getInteractionId(this.td.events, 'events'),
                 credentials: 'Basic ' +  Buffer.from(registration.oid + ":" + registration.password).toString('base64')
-            });
-            await persistance.saveConfigurationFile('registrations', localRegistrations);
+            };
+            await persistance.addCredentials(newRegistration);
+            return Promise.resolve(true);
+        } catch(err) {
+            return Promise.reject(err);
+        }
+    }
+
+    /**
+     * Receives all oids that were removed form the platform
+     * They need to be removed from the agent too
+     * @param {array} unregistrations 
+     */
+    static async removeCredentials(unregistrations){
+        try{
+            await persistance.removeCredentials(unregistrations); // Remove from memory unregistered objects
             return Promise.resolve(true);
         } catch(err) {
             return Promise.reject(err);
@@ -104,26 +117,6 @@ const interactions = {
         return {
             agid: config.gatewayId,
             oids: arrayOfOids
-        }
-    }
-
-    /**
-     * Receives all oids that were removed form the platform
-     * They need to be removed from the agent too
-     * @param {array} unregistrations 
-     */
-    static async removeCredentials(unregistrations){
-        let newRegistrations = [];
-        try{
-            let localRegistrations = await persistance.getConfigurationFile('registrations');
-            localRegistrations.filter((item) => {
-                if(unregistrations.indexOf(item.oid) === -1) newRegistrations.push(item);
-            })
-            await persistance.removeCredentials(unregistrations); // Remove from memory unregistered objects
-            await persistance.saveConfigurationFile('registrations', newRegistrations);
-            return Promise.resolve(true);
-        } catch(err) {
-            return Promise.reject(err);
         }
     }
 

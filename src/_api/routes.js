@@ -23,6 +23,15 @@ router
   .get('/actions/:id', controller.actions)
   .get('/events', controller.events)
   .get('/events/:id', controller.events)
+  // IMPORT/EXPORT endpoints
+  .get('/import/registrations', controller.importFile)
+  .get('/import/properties', controller.importFile)
+  .get('/import/actions', controller.importFile)
+  .get('/import/events', controller.importFile)
+  .get('/export/registrations', controller.exportFile)
+  .get('/export/properties', controller.exportFile)
+  .get('/export/actions', controller.exportFile)
+  .get('/export/events', controller.exportFile)
   // HEALTHCHECK endpoints
   .get('/healthcheck', controller.healthcheck);
 

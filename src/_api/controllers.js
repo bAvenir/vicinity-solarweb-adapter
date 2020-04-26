@@ -93,6 +93,38 @@ module.exports.events = function(req, res){
     })
 }
 
+// IMPORT/EXPORT endpoints
+
+module.exports.importFile = function(req, res){
+    let path = req.path;
+    let n = path.lastIndexOf('/');
+    let type = path.substring(n + 1);
+    let logger = new Log();
+    agent.importFromFile(type)
+    .then(() => {
+        res.json({error: false, message: 'DONE'})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
+}
+
+module.exports.exportFile = function(req, res){
+    let path = req.path;
+    let n = path.lastIndexOf('/');
+    let type = path.substring(n + 1);
+    let logger = new Log();
+    agent.exportToFile(type)
+    .then(() => {
+        res.json({error: false, message: 'DONE'})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
+}
+
 // HEALTHCHECK endpoints
 
   module.exports.healthcheck = async function(req, res){

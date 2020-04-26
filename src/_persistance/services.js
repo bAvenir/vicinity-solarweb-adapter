@@ -25,7 +25,7 @@ fun.storeInMemory = async function(type, array){
     try{
         if(type === 'registrations'){
             for(let i = 0, l = array.length; i<l; i++){
-                await _addOid(array[i]);
+                await fun.addOid(array[i]);
             }
         } else {
             await _storeInteractions(type, array);
@@ -33,6 +33,68 @@ fun.storeInMemory = async function(type, array){
         return Promise.resolve(true);
     } catch(err) {
         return Promise.reject(err);
+    }
+}
+
+/**
+ * Gets interactions or registrations from memory
+ */
+fun.getFromMemory = async function(type){
+    try{
+        let result;
+        if(type === 'registrations'){
+            let oids = await redis.smembers(type);
+            let todo = [];
+            for(let i = 0, l = oids.length; i<l; i++){
+                todo.push(redis.hgetall(oids[i]));
+            }
+            result = await Promise.all(todo);
+            result = JSON.stringify(result);
+        } else {
+            let interactions = await redis.smembers(type);
+            result = '['
+            for(let i = 0, l = interactions.length; i<l; i++){
+                if(i === 0){
+                    result = result + await redis.hget(`${type}:${interactions[i]}`, 'body'); 
+                } else {
+                    result = result + ',' + await redis.hget(`${type}:${interactions[i]}`, 'body'); 
+                }
+            }
+            result = result + ']';
+        }
+        return Promise.resolve(result);
+    } catch(err) {
+        return Promise.reject(err);
+    }
+}
+
+fun.addOid = async function(data){
+    let logger = new Log();
+    try{ 
+        let todo = [];
+        if(!data.credentials || !data.password || !data.adapterId || !data.name || !data.type ){
+            throw new Error(`Object with oid ${data.oid} misses some fields, its credentials could not be stored...`);
+        }
+        let exists = await redis.sismember('registrations', data.oid);
+        if(!exists){
+            todo.push(redis.sadd('registrations', data.oid));
+            todo.push(redis.hset(data.oid, 'credentials', data.credentials));
+            todo.push(redis.hset(data.oid, 'password', data.password));
+            todo.push(redis.hset(data.oid, 'adapterId', data.adapterId));
+            todo.push(redis.hset(data.oid, 'name', data.name));
+            todo.push(redis.hset(data.oid, 'type', data.type));
+            if(data.properties.length) todo.push(redis.hset(data.oid, 'properties', data.properties.toString()));
+            if(data.events.length) todo.push(redis.hset(data.oid, 'events', data.events.toString()));
+            if(data.actions.length) todo.push(redis.hset(data.oid, 'agents', data.agents.toString()));
+            await Promise.all(todo);
+        } else {
+            logger.warn(`OID: ${data.oid} is already stored in memory.`, "PERSISTANCE")
+        }
+        if(data.events.length) await gateway.activateEventChannels(data.oid, data.events);
+        return Promise.resolve(true);
+    } catch(err) {
+        logger.warn(err, "PERSISTANCE")
+        return Promise.resolve(false)
     }
 }
 
@@ -57,23 +119,6 @@ fun.removeOid = async function(oid){
     }
 }
 
-/**
- * Get an interaction previously stored
- * Interactions are user defined
- * @param {string} type (preperties, actions, events)
- * @param {string} id interaction name
- * @returns {object} JSON with TD interaction schema
- */
-fun.getInteractionObject = async function(type, id){
-    let logger = new Log();
-    try{ 
-        let obj = await redis.hget(type + ":" + id, "body");
-        return Promise.resolve(obj);
-    } catch(err) {
-        logger.error(err, "PERSISTANCE")
-        return Promise.reject(false)
-    }
-}
 
 /**
  * Adds configuration of agent info
@@ -147,34 +192,6 @@ async function _storeInteractions(type, array){
         } catch(err) {
             Promise.reject(err);
         }
-    }
-}
-
-async function _addOid(data){
-    let logger = new Log();
-    try{ 
-        let todo = [];
-        if(!data.credentials || !data.password || !data.adapterId || !data.name || !data.type ){
-            throw new Error(`Object with oid ${data.oid} misses some fields, its credentials could not be stored...`);
-        }
-        let exists = await redis.sismember('registrations', data.oid);
-        if(!exists){
-            todo.push(redis.sadd('registrations', data.oid));
-            todo.push(redis.hset(data.oid, 'credentials', data.credentials));
-            todo.push(redis.hset(data.oid, 'password', data.password));
-            todo.push(redis.hset(data.oid, 'adapterId', data.adapterId));
-            todo.push(redis.hset(data.oid, 'name', data.name));
-            todo.push(redis.hset(data.oid, 'type', data.type));
-            if(data.properties.length) todo.push(redis.hset(data.oid, 'properties', data.properties.toString()));
-            if(data.events.length) todo.push(redis.hset(data.oid, 'events', data.events.toString()));
-            if(data.actions.length) todo.push(redis.hset(data.oid, 'agents', data.agents.toString()));
-            await Promise.all(todo);
-        }
-        if(data.events.length) await gateway.activateEventChannels(data.oid, data.events);
-        return Promise.resolve(true);
-    } catch(err) {
-        logger.warn(err, "PERSISTANCE")
-        return Promise.resolve(false)
     }
 }
 

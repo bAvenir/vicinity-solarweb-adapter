@@ -20,7 +20,7 @@ services:
       cache-db:
         condition: service_healthy
     ports:
-    - 80:80
+    - 9997:9997
     image: nginx:1.15-alpine
   gateway:
     container_name: gateway

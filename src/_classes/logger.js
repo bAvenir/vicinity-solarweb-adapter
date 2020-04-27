@@ -4,7 +4,8 @@
  * @class
  */
 
-var logger = require('../_utils/logger');
+const logger = require('../_utils/logger');
+const config = require('../_configuration/configuration');
 
 module.exports = class Log {
   constructor() {
@@ -14,7 +15,7 @@ module.exports = class Log {
   // Methods
   
   debug(message, agent, other) {
-    logger.debug(this._buildLog(this.ini, message, agent, other));
+    if(config.env !== 'production') logger.debug(this._buildLog(this.ini, message, agent, other));
   }
   info(message, agent, other) {
     logger.info(this._buildLog(this.ini, message, agent, other));

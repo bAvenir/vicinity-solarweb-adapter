@@ -14,4 +14,6 @@ gateway/keystore/*.der
 gateway/data/
 gateway/log/
 ## Agent Files
-agent/*
+agent/exports/
+## Logs
+log/

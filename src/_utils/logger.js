@@ -6,10 +6,22 @@ The level of verbosity can be customized based on needs
 
 var winston = require('winston');
 const { createLogger, format, transports } = winston;
+require('winston-daily-rotate-file');
+ 
+  let file_transport = new winston.transports.DailyRotateFile({
+    filename: './log/adapter-%DATE%.log',
+    datePattern: 'YYYY-MM-DD-HH',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '14d'
+  });
 
-// winston.emitErrs = true;
+  let console_transport = new winston.transports.Console({
+    level: 'debug',
+    json: true
+  });
 
-var myCustomLevels = {
+let myCustomLevels = {
   levels: {
     error: 0,
     warn: 1,
@@ -26,24 +38,28 @@ var myCustomLevels = {
   }
 };
 
-var logger = winston.createLogger({
+let logger = winston.createLogger({
     levels: myCustomLevels.levels,
     transports: [
-        new winston.transports.Console({
-          level: 'debug',
-          json: true
-        })
+      file_transport,
+      console_transport
     ],
     format: format.combine(
         // format.label({ label: 'something' }),
         // format.timestamp(),
-        format.colorize(),
+        // format.colorize(),
         format.simple()
       ),
     exitOnError: false
 });
 
-// var logger_json = winston.createLogger({
+// winston.emitErrs = true;
+
+// transport.on('rotate', function(oldFilename, newFilename) {
+//   // do something fun
+// });
+
+// let logger_json = winston.createLogger({
 //     levels: myCustomLevels.levels,
 //     transports: [
 //         new winston.transports.Console({

@@ -34,11 +34,12 @@ done
 # Initial folder setup
 mkdir -p ${MY_PATH}/gateway/log
 mkdir -p ${MY_PATH}/gateway/data
-mkdir -p ${MY_PATH}/agent
-touch ${MY_PATH}/agent/events.json  
-touch ${MY_PATH}/agent/properties.json
-touch ${MY_PATH}/agent/actions.json
-touch ${MY_PATH}/agent/registrations.json
+mkdir -p ${MY_PATH}/agent/exports
+mkdir -p ${MY_PATH}/log
+touch ${MY_PATH}/agent/exports/events.json  
+touch ${MY_PATH}/agent/exports/properties.json
+touch ${MY_PATH}/agent/exports/actions.json
+touch ${MY_PATH}/agent/exports/registrations.json
 
 # Kill and remove old proxy containers
 docker kill proxy bavenir-adapter gateway

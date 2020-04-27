@@ -8,6 +8,7 @@
 const express = require('express');
 let router = express.Router();
 let controller = require('./controllers');
+let cache = require('../_persistance/_modules/redis');
 
 router
     // ***** Agent endpoints *****
@@ -34,7 +35,7 @@ router
   .post('/events/remote/:id/:oid/:eid', controller.subscribeRemoteEventChannel) // Subscribe to remote event channel
   .delete('/events/remote/:id/:oid/:eid', controller.unsubscribeRemoteEventChannel) // Unsubscribe to remote event channel
     // ***** Gateway proxy *****
-  .get('/objects/:id/properties/:pid', controller.proxyGetProperty) // receive property request from gtw
+  .get('/objects/:id/properties/:pid', cache.getCached, controller.proxyGetProperty) // receive property request from gtw
   .put('/objects/:id/properties/:pid', controller.proxySetProperty) // receive request to upd property from gtw
   // .post('/objects/:oid/actions/:aid') // receive request to start action
   // .delete('/objects/:oid/actions/:aid') // receive request to stop action

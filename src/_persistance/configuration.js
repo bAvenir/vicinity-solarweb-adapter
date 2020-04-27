@@ -15,4 +15,5 @@ let config = module.exports = {};
 config.db = process.env.PERSISTANCE_DB || "none";
 config.dbHost = process.env.PERSISTANCE_DB_HOST || "cache-db";
 config.dbPort = process.env.PERSISTANCE_DB_PORT || 6379;
+config.cache = process.env.PERSISTANCE_CACHE === 'enabled';
 config.cacheTtl = process.env.PERSISTANCE_CACHE_TTL || 1000;

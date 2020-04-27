@@ -29,7 +29,7 @@ module.exports = class Request {
 
   setBody(body){
     if(body && this.options.method !== "GET"){
-      this.options.body = JSON.stringify(body);
+      this.options.body = typeof body === 'string' ? body : JSON.stringify(body);
     }
   }
 

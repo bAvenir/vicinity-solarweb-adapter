@@ -19,22 +19,27 @@ module.exports = {
    * If the key exists retrieve value from cache
    */
   getCached: (req, res, next) => {
-    var redis_key = req.path;
-    client.get(redis_key, function(err, reply) {
-      if (err) {
-        logger.error("Error reading cache", "REDIS");
-        res.status(500).json({
-          message: "Something Went Wrong"
-        })
-      }
-      if (reply == null) {
-        logger.debug("Cache miss " + redis_key, "REDIS");
-        next();
-      } else {
-        logger.debug("Cache hit " + redis_key, "REDIS");
-        res.status(200).json({"value": reply});
-      }
-    });
+    let redis_key = req.path;
+    if(config.cache){
+      client.get(redis_key, function(err, reply) {
+        if (err) {
+          logger.error("Error reading cache", "REDIS");
+          res.status(500).json({
+            message: "Something Went Wrong"
+          })
+        }
+        if (reply == null) {
+          logger.debug("Cache miss " + redis_key, "REDIS");
+          next();
+        } else {
+          logger.debug("Cache hit " + redis_key, "REDIS");
+          let response = JSON.parse(reply);  
+          res.status(200).json(response);
+        }
+      });
+    } else {
+      next(); 
+    }
   },
   /**
    * Store value in cache after request to the source API

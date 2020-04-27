@@ -45,7 +45,7 @@ module.exports.proxyGetProperty = async function(oid, pid){
             default:
                 throw new Error('ADAPTER ERROR: Selected module could not be found');
         }
-
+        persistance.addToCache(`/objects/${oid}/properties/${pid}`, result);
         logger.debug(`Responded to get property ${pid} of ${oid} in mode: ${responseMode}`, "ADAPTER");
         return Promise.resolve(result);
     } catch(err) {

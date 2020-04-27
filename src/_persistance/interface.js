@@ -248,6 +248,19 @@ module.exports.getConfigDetail = async function(type, id){
     }
 }
 
+// CACHE
+
+/**
+ * Add property request to cache
+ */
+module.exports.addToCache = async function(key, data){
+    try{
+        redis.caching(key, data);
+        return Promise.resolve(true);
+    } catch(err){
+        return Promise.resolve(false);
+    }
+}
 
 // System Health
 

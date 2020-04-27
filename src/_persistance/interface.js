@@ -119,6 +119,20 @@ module.exports.getLocalObjects = async function(oid){
     }
 }
 
+/**
+ * Get count of local objects registered
+ */
+module.exports.getCountOfRegistrations = async function(){
+    let logger = new Log();
+    try{ 
+        let count = await redis.scard('registrations');
+        return Promise.resolve(count);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
 // MANAGE INTERACTION OBJECTS
 
 /**

@@ -36,6 +36,7 @@ const interactions = {
      */
     async buildTD(data){
         try{
+            await this._checkNumberOfRegistrations();
             this._validate(data);
             this.td['adapter-id'] = data.adapterId;
             this.td.name = data.name;
@@ -138,10 +139,27 @@ const interactions = {
         }
     }
 
+    /**
+     * Check if all required parameters for registration are included
+     * @param {object} data 
+     */
     _validate(data){
         if(!data.name) throw new Error('REGISTRATION ERROR: Missing name');
         if(!data.type) throw new Error('REGISTRATION ERROR: Missing type');
         if(!data.adapterId) throw new Error('REGISTRATION ERROR: Missing adapterId');
+    }
+
+    /**
+     * Check that number of local registrations stays below 100
+     */
+    async _checkNumberOfRegistrations(){
+        try{
+            let count = await persistance.getCountOfRegistrations();
+            if(count>=100) throw new Error('You have reached max number of registrations!');
+            return Promise.resolve(true);
+        } catch(err) {
+            return Promise.reject(err);
+        }
     }
 
     /**

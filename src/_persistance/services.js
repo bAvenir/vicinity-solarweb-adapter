@@ -23,14 +23,15 @@ let fun = {};
  */
 fun.storeInMemory = async function(type, array){
     try{
+        let result;
         if(type === 'registrations'){
             for(let i = 0, l = array.length; i<l; i++){
-                await fun.addOid(array[i]);
+                result = await fun.addOid(array[i]);
             }
         } else {
-            await _storeInteractions(type, array);
+            result = await _storeInteractions(type, array);
         }
-        return Promise.resolve(true);
+        return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err);
     }
@@ -178,19 +179,22 @@ async function _storeInteractions(type, array){
     logger.debug(`Storing ${type}...`, "PERSISTANCE")
     for(let i=0, l=array.length; i<l; i++){
         try{
-            let exists = await redis.sismember(type, array[i][id]);
+            let aux = array[i][id] == null ? "test" : array[i][id]; // Avoid type error in redis
+            let exists = await redis.sismember(type, aux);
             let notNull = (array[i][id] != null && array[i][does] != null);
             if(!exists && notNull){
                 await redis.sadd(type, array[i][id]);
                 await redis.hset(`${type}:${array[i][id]}`, 'body', JSON.stringify(array[i]));
                 await redis.hset(`${type}:${array[i][id]}`, 'vicinity', array[i][does]);
                 logger.debug(`${type} entry ${i} : ${array[i][id]} stored`, "PERSISTANCE");
+                return Promise.resolve(true);
             } else {
                 if(exists) logger.warn(`${type} entry ${i} already exists`, "PERSISTANCE");
                 if(!notNull) logger.warn(`${type} entry ${i} misses id or interaction`, "PERSISTANCE");
+                return Promise.resolve(false);
             }
         } catch(err) {
-            Promise.reject(err);
+            return Promise.reject(err);
         }
     }
 }

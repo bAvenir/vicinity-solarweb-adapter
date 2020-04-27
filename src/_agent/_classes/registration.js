@@ -132,7 +132,6 @@ const interactions = {
                 if(aux == null) throw new Error(`REGISTRATION ERROR: Interaction: ${uniqueInteractions[i]} could not be found in ${type}`); 
                 interactionsArray.push(JSON.parse(aux));
             }
-            // TBD If there are events --> Create the channel!!!
             return Promise.resolve(interactionsArray);
         } catch(err) {
             return Promise.reject(err);

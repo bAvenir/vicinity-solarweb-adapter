@@ -9,6 +9,8 @@ const fileMgmt = require('./_modules/fileMgmt');
 const redis = require('./_modules/redis');
 const services = require('./services');
 
+// External files
+
 /**
  * Imports configuration files to memory
  */
@@ -45,6 +47,8 @@ module.exports.saveConfigurationFile = async function(fileType){
         return Promise.reject(false)
     }
 }
+
+// MANAGE OIDs and Credentials
 
 /**
  * Get credentials for one OID
@@ -115,6 +119,8 @@ module.exports.getLocalObjects = async function(oid){
     }
 }
 
+// MANAGE INTERACTION OBJECTS
+
 /**
  * Get an interaction previously stored
  * Interactions are user defined
@@ -132,6 +138,61 @@ module.exports.getInteractionObject = async function(type, id){
         return Promise.reject(false)
     }
 }
+
+/**
+ * Add interaction objects
+ * Interactions are user defined
+ * @param {string} type (preperties, actions, events)
+ * @param {object} body interaction body
+ */
+module.exports.addInteractionObject = async function(type, body){
+    let logger = new Log();
+    try{ 
+        let result = await services.storeInMemory(type, [body]);
+        return Promise.resolve(result);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+/**
+ * Remove interaction objects
+ * Interactions are user defined
+ * @param {string} type (preperties, actions, events)
+ * @param {string} id interaction name
+ */
+module.exports.removeInteractionObject = async function(type, id){
+    let logger = new Log();
+    try{ 
+        await redis.srem(type, id);
+        await redis.hdel(`${type}:${id}`, 'body');
+        await redis.hdel(`${type}:${id}`, 'vicinity');
+        return Promise.resolve(true);
+    } catch(err) {
+        logger.error(err, "PERSISTANCE")
+        return Promise.reject(false)
+    }
+}
+
+/**
+ * Check if incoming request is valid
+ * Oid exists in infrastructure and has pid
+ */
+module.exports.combinationExists = async function(oid, pid){
+    try{
+        let exists = await redis.sismember('registrations', oid);
+        if(!exists) throw new Error(`Object ${oid} does not exist in infrastructure`);
+        let properties = await redis.hget(oid, 'properties');
+        let p = properties.split(',');
+        if(p.indexOf(pid) === -1 ) throw new Error(`Object ${oid} does not have property ${pid}`);
+        return Promise.resolve(true);
+    } catch(err){
+        return Promise.reject(err);
+    }    
+}
+
+// Configuration info MANAGEMENT
 
 /**
  * Store configuration information
@@ -187,6 +248,9 @@ module.exports.getConfigDetail = async function(type, id){
     }
 }
 
+
+// System Health
+
 /**
  * Check Redis availability
  */
@@ -197,21 +261,4 @@ module.exports.redisHealth = async function(){
     } catch(err){
         return Promise.resolve(false);
     }
-}
-
-/**
- * Check if incoming request is valid
- * Oid exists in infrastructure and has pid
- */
-module.exports.combinationExists = async function(oid, pid){
-    try{
-        let exists = await redis.sismember('registrations', oid);
-        if(!exists) throw new Error(`Object ${oid} does not exist in infrastructure`);
-        let properties = await redis.hget(oid, 'properties');
-        let p = properties.split(',');
-        if(p.indexOf(pid) === -1 ) throw new Error(`Object ${oid} does not have property ${pid}`);
-        return Promise.resolve(true);
-    } catch(err){
-        return Promise.reject(err);
-    }    
 }

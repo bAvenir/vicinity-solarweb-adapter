@@ -65,7 +65,7 @@ Area to start services
 async function bootstrap(){
   try{
     // Start Redis DB
-    await cache.start();
+    cache.start();
 
     // TBD decide what to do if initialization fails (Stop adapter, restart, notify ...)
     await agent.initialize();

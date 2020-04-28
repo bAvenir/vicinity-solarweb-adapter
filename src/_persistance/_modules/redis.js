@@ -78,6 +78,24 @@ module.exports = {
       });
     });
   },
+  // PERSIST
+  /**
+   * Force saving changes to dump.rdb
+   * Use to ensure critical changes will not be lost
+   */
+  save: () => {
+    return new Promise(function (resolve, reject) {
+      client.save(function(err, reply) {
+        if (err) {
+          logger.error(err, "REDIS");
+          reject(false);
+        } else {
+          logger.info(`REDIS DB persisted: ${reply}`, "REDIS");
+          resolve(reply);
+        }
+      });
+    });
+  },
   // SETS
   /**
    * Adds item to set

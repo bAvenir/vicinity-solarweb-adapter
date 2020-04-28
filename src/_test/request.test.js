@@ -5,8 +5,7 @@ let logger = new Log();
 
 describe("request.js", () => {
     it("Check request misses uri", () => {
-        let req = new request();
-        return req.send()
+        return requestmock.send(null,null)
         // .then(response => expect(response).toEqual(''))
         .catch(err => {
             expect(err).toEqual('Missing URI');

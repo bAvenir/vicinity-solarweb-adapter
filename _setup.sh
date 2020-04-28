@@ -1,40 +1,35 @@
 #!/bin/bash
-USAGE="$(basename "$0") [-h -p -l]
+USAGE="$(basename "$0") [-h -e]
 -- Prepares prod or dev mode
 -- Deletes old images
 -- Examples
-./run.sh -p
+./_setup.sh 
 Where:
   Flags:
       -h  Shows help
-      -l  Activates local (Has priority if enabled)
-      -p  Activates production mode"
+      -e  environment [dev, prod]"
 
 # Default config
-SSL="false"
-LOCAL="false"
+MY_ENV="dev"
 MY_PATH=$(pwd)
 
 # Get configuration
-while getopts 'hd:pd:ld:' OPTION; do
+while getopts 'hd:e:' OPTION; do
 case "$OPTION" in
     h)
     echo "$USAGE"
     exit 0
     ;;
-    l)
-    LOCAL="true"
-    ;;
-    p)
-    SSL="true"
+    e)
+    MY_ENV="$OPTARG"
     ;;
 esac
 done
 
 # Initial folder setup
 mkdir -p ${MY_PATH}/gateway/log
-mkdir -p ${MY_PATH}/gateway/data
 mkdir -p ${MY_PATH}/agent/exports
+mkdir -p ${MY_PATH}/nginx/logs
 mkdir -p ${MY_PATH}/log
 touch ${MY_PATH}/agent/exports/events.json  
 touch ${MY_PATH}/agent/exports/properties.json
@@ -42,21 +37,14 @@ touch ${MY_PATH}/agent/exports/actions.json
 touch ${MY_PATH}/agent/exports/registrations.json
 
 # Kill and remove old proxy containers
-docker kill proxy bavenir-adapter gateway
-docker rm proxy bavenir-adapter gateway
-docker rmi bavenir-adapter
+docker kill proxy bavenir-adapter gateway cache-db
+docker rm proxy bavenir-adapter gateway cache-db
+docker rmi bavenir-adapter_bavenir-adapter
 docker rm $(docker ps -a -q) # Remove zombi containers
 
 # Start proxy container
-if [ ${LOCAL} == "true" ]; then
-    docker run -p 8181:8181 -d --name gateway \
-        -v ${MY_PATH}/gateway/GatewayConfig.xml:/gateway/config/GatewayConfig.xml:ro \
-        bavenir/vicinity-gateway-api:latest
-    npm run dev
-else 
-    if [ ${SSL} == "false" ]; then
-        docker-compose -f docker-compose.yml up -d
-    else
-        docker-compose -f docker-compose-prod.yml up -d
-    fi
+if [ ${MY_ENV} == "prod" ]; then
+    docker-compose -f docker-compose.yml up
+else
+    docker-compose -f docker-compose-dev.yml up
 fi

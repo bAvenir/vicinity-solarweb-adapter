@@ -91,6 +91,8 @@ module.exports.removeCredentials = async function(oids){
         for(let i = 0, l = oids.length; i<l; i++){
             await services.removeOid(oids[i]);
         }
+        // Persist changes to dump.rdb
+        await redis.save();
         return Promise.resolve(true);
     } catch(err) {
         logger.error(err, "PERSISTANCE")
@@ -182,6 +184,8 @@ module.exports.removeInteractionObject = async function(type, id){
         await redis.srem(type, id);
         await redis.hdel(`${type}:${id}`, 'body');
         await redis.hdel(`${type}:${id}`, 'vicinity');
+        // Persist changes to dump.rdb
+        await redis.save();
         return Promise.resolve(true);
     } catch(err) {
         logger.error(err, "PERSISTANCE")

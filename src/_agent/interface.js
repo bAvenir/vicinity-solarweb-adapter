@@ -7,6 +7,7 @@
 
 const Req = require('./_classes/gatewayRequest');
 const config = require('./configuration');
+const Log = require('../_classes/logger');
 
 // ***** AUTHENTICATION *****
 
@@ -17,6 +18,7 @@ const config = require('./configuration');
  */
 
 module.exports.login = async function(oid){
+    let logger = new Log();
     try{
         let request = new Req();
         await request.setAuthorization(oid);
@@ -25,7 +27,9 @@ module.exports.login = async function(oid){
         request = null;
         return Promise.resolve(result);
     } catch(err) {
-        return Promise.reject(err)
+        logger.warn("Object " + oid + " was not logged in ...", "GATEWAY");
+        logger.warn(err, "GATEWAY");
+        return Promise.resolve(err);
     }
 }
 

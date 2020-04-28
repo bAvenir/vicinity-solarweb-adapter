@@ -17,3 +17,6 @@ gateway/log/
 agent/exports/
 ## Logs
 log/
+nginx/logs/
+## Redis
+redis/data/

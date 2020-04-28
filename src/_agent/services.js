@@ -22,8 +22,8 @@ services.doLogins = async function(array){
             actions.push(gateway.login(array[i]));
         }
         await Promise.all(actions);
-        logger.info('All logins were successful', "AGENT");
-        return Promise.resolve("Logins were successful");
+        logger.info('All logins finalized', "AGENT");
+        return Promise.resolve("All logins finalized");
     } catch(err) {
         return Promise.reject(err);
     }

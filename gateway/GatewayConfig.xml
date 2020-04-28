@@ -404,7 +404,7 @@
 
 			Defaults to localhost. In DOCKER use BRIDGE connection
 			-->
-			<agent>bavenir-adapter</agent>
+			<agent>proxy</agent>
 
 			<!--
 			Port on which the REST Agent listens.

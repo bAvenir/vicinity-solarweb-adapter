@@ -85,7 +85,7 @@ module.exports.importFromFile = async function(type){
         await persistance.loadConfigurationFile(type);
         return Promise.resolve(true);
     }catch(err){
-        return Promise.reject(false);
+        return Promise.reject(err);
     }
 }
 
@@ -99,6 +99,6 @@ module.exports.exportToFile = async function(type){
         await persistance.saveConfigurationFile(type);
         return Promise.resolve(true);
     }catch(err){
-        return Promise.reject(false);
+        return Promise.reject(err);
     }
 }

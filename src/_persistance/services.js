@@ -31,6 +31,8 @@ fun.storeInMemory = async function(type, array){
         } else {
             result = await _storeInteractions(type, array);
         }
+        // Persist changes to dump.rdb
+        await redis.save();
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err);
@@ -79,19 +81,20 @@ fun.addOid = async function(data){
         let exists = await redis.sismember('registrations', data.oid);
         if(!exists){
             todo.push(redis.sadd('registrations', data.oid));
+            todo.push(redis.hset(data.oid, 'oid', data.oid));
             todo.push(redis.hset(data.oid, 'credentials', data.credentials));
             todo.push(redis.hset(data.oid, 'password', data.password));
             todo.push(redis.hset(data.oid, 'adapterId', data.adapterId));
             todo.push(redis.hset(data.oid, 'name', data.name));
             todo.push(redis.hset(data.oid, 'type', data.type));
-            if(data.properties.length) todo.push(redis.hset(data.oid, 'properties', data.properties.toString()));
-            if(data.events.length) todo.push(redis.hset(data.oid, 'events', data.events.toString()));
-            if(data.actions.length) todo.push(redis.hset(data.oid, 'agents', data.agents.toString()));
+            if(data.properties && data.properties.length) todo.push(redis.hset(data.oid, 'properties', data.properties.toString()));
+            if(data.events && data.events.length) todo.push(redis.hset(data.oid, 'events', data.events.toString()));
+            if(data.actions && data.actions.length) todo.push(redis.hset(data.oid, 'agents', data.agents.toString()));
             await Promise.all(todo);
         } else {
             logger.warn(`OID: ${data.oid} is already stored in memory.`, "PERSISTANCE")
         }
-        if(data.events.length) await gateway.activateEventChannels(data.oid, data.events);
+        if(data.events && data.events.length) await gateway.activateEventChannels(data.oid, data.events);
         return Promise.resolve(true);
     } catch(err) {
         logger.warn(err, "PERSISTANCE")

@@ -17,7 +17,7 @@ const services = require('./services');
 module.exports.loadConfigurationFile = async function(fileType){
     let logger = new Log();
     try{ 
-        let file = await fileMgmt.read(`./agent/exports/${fileType}.json`);
+        let file = await fileMgmt.read(`./agent/imports/${fileType}.json`);
         let array = JSON.parse(file);
         let countRows = array.length;
         if(countRows>0){

@@ -7,10 +7,15 @@ This is a Node.js project that acts as an adapter between VICINITY and other tec
 The first version aims to support the following interactions:
 
 * Suport Data collection and integration with 3rd party apps
-* Support to Gateway REST
+* Support to GATEWAY REST
 * Support to GATEWAY EVENTS
 * Management of registrations and credentials
-* Support creating Thing Descriptions
+* Support for creating Thing Descriptions
+
+### Future versions
+
+* Add support to GATEWAY actions
+* Add generic adapters/support for known technologies
 
 ## Pre-requisites
 

@@ -179,6 +179,7 @@ async function _storeInteractions(type, array){
     let interaction =  interactions[type];
     let id = interaction['id'];
     let does = interaction['does'];
+    let success = true; // Case some interaction is not valid, no error but no success either
     logger.debug(`Storing ${type}...`, "PERSISTANCE")
     for(let i=0, l=array.length; i<l; i++){
         try{
@@ -190,16 +191,16 @@ async function _storeInteractions(type, array){
                 await redis.hset(`${type}:${array[i][id]}`, 'body', JSON.stringify(array[i]));
                 await redis.hset(`${type}:${array[i][id]}`, 'vicinity', array[i][does]);
                 logger.debug(`${type} entry ${i} : ${array[i][id]} stored`, "PERSISTANCE");
-                return Promise.resolve(true);
             } else {
                 if(exists) logger.warn(`${type} entry ${i} already exists`, "PERSISTANCE");
                 if(!notNull) logger.warn(`${type} entry ${i} misses id or interaction`, "PERSISTANCE");
-                return Promise.resolve(false);
+                success = false;
             }
         } catch(err) {
             return Promise.reject(err);
         }
     }
+    return Promise.resolve(success);
 }
 
 // Export module

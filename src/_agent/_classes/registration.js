@@ -123,11 +123,11 @@ const interactions = {
 
     // Private Methods
 
-    async _checkInteractionPatterns(interactions, type){
+    async _checkInteractionPatterns(all_interactions, type){
         let interactionsArray = [];
         try{
-            if(!Array.isArray(interactions)) throw new Error(`REGISTRATION ERROR: ${type} is not a valid array`);
-            let uniqueInteractions = [ ...new Set(interactions)]; // Ensure interaction ids registered are unique 
+            if(!Array.isArray(all_interactions)) throw new Error(`REGISTRATION ERROR: ${type} is not a valid array`);
+            let uniqueInteractions = [ ...new Set(all_interactions)]; // Ensure interaction ids registered are unique 
             for(let i = 0, l = uniqueInteractions.length; i < l; i++){
                 let aux = await persistance.getInteractionObject(type, uniqueInteractions[i]);
                 if(aux == null) throw new Error(`REGISTRATION ERROR: Interaction: ${uniqueInteractions[i]} could not be found in ${type}`); 

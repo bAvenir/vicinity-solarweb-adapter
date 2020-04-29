@@ -65,7 +65,6 @@ services.registerObject = async function(body){
             actions.push(gateway.login(result.message[i].oid));
         }
         await Promise.all(actions);
-        registration = null;
         return Promise.resolve(result.message);
     } catch(err) {
         return Promise.reject(err);

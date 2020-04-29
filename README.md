@@ -103,6 +103,7 @@ Load into app using process.env.ENV_VAR and the npm package dotenv.
 ## DOCKER
 
 The use of DOCKER is recommended. It is possible to run the Node.js app, VICINITY OGWAPI and REDIS out of DOCKER, however this configuration is not supported. 
+
 * To run without DOCKER:
     * Change the hosts and ports in .env to your convenience
     * Update gateway/GatewayConfig.xml --> < agent >NODEJS-APP-HOST</ agent >

@@ -14,7 +14,6 @@ gateway/data/
 gateway/log/
 ## Agent Files
 agent/exports/
-agent/imports/
 ## Logs
 log/
 nginx/logs/

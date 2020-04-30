@@ -104,7 +104,7 @@ module.exports.proxyReceiveEvent = async function(oid, eid, body){
                 logger.info(`Event received from channel ${eid} of ${oid}: ${event}`, "ADAPTER");
                 break;
             case 'proxy':
-                result = await proxyModule.receiveEvent(oid, eid, body, proxyUrl);
+                await proxyModule.receiveEvent(oid, eid, body, proxyUrl);
                 break;
             default:
                 throw new Error('ADAPTER ERROR: Selected module could not be found');

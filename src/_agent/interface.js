@@ -24,7 +24,6 @@ module.exports.login = async function(oid){
         await request.setAuthorization(oid);
         request.setUri('objects/login');
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         logger.warn("Object " + oid + " was not logged in ...", "GATEWAY");
@@ -45,7 +44,6 @@ module.exports.logout = async function(oid){
         await request.setAuthorization(oid);
         request.setUri('objects/logout');
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -67,7 +65,6 @@ module.exports.getRegistrations = async function(){
         await request.setAuthorization(null);
         request.setUri(`agents/${config.gatewayId}/objects`);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result.message);
     } catch(err) {
         return Promise.reject(err)
@@ -90,7 +87,6 @@ module.exports.postRegistrations = async function(body){
         request.setBody(body);
         request.setUri('agents/' + config.gatewayId + '/objects');
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -112,7 +108,6 @@ module.exports.removeRegistrations = async function(body){
         request.setBody(body);
         request.setUri('agents/' + config.gatewayId + '/objects/delete');
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -141,7 +136,6 @@ module.exports.discovery = async function(oid){
         await request.setAuthorization(oid);
         request.setUri('objects');
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -169,7 +163,6 @@ module.exports.getProperty = async function(oid, remote_oid, pid){
         await request.setAuthorization(oid);
         request.setUri('objects/' + remote_oid + '/properties/' + pid);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -190,7 +183,6 @@ module.exports.putProperty = async function(oid, remote_oid, pid){
         request.setMethod("PUT");
         request.setUri('objects/' + remote_oid + '/properties/' + pid);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -211,7 +203,6 @@ module.exports.activateEventChannel = async function(oid, eid){
         request.setMethod("POST");
         request.setUri('events/' + eid);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -233,7 +224,6 @@ module.exports.publishEvent = async function(oid, eid, body){
         request.setBody(body);
         request.setUri('events/' + eid);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -254,7 +244,6 @@ module.exports.deactivateEventChannel = async function(oid, eid){
         request.setMethod("DELETE");
         request.setUri('events/' + eid);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -274,7 +263,6 @@ module.exports.statusRemoteEventChannel = async function(oid, remote_oid, eid){
         await request.setAuthorization(oid);
         request.setUri('objects/' + remote_oid + '/events/' + eid);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -295,7 +283,6 @@ module.exports.subscribeRemoteEventChannel = async function(oid, remote_oid, eid
         request.setMethod('POST');
         request.setUri('objects/' + remote_oid + '/events/' + eid);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -316,7 +303,6 @@ module.exports.unsubscribeRemoteEventChannel = async function(oid, remote_oid, e
         request.setMethod('DELETE');
         request.setUri('objects/' + remote_oid + '/events/' + eid);
         let result = await request.send();
-        request = null;
         return Promise.resolve(result);
     } catch(err) {
         return Promise.reject(err)
@@ -344,8 +330,7 @@ module.exports.health = async function(){
         let request = new Req();
         await request.setAuthorization();
         request.setUri('objects/login');
-        let result = await request.send();
-        request = null;
+        await request.send();
         return Promise.resolve('OK');
     } catch(err) {
         return Promise.resolve(err)

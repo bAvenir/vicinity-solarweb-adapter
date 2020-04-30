@@ -30,13 +30,14 @@ done
 mkdir -p ${MY_PATH}/gateway/log
 mkdir -p ${MY_PATH}/agent/exports
 mkdir -p ${MY_PATH}/agent/imports
+mkdir -p ${MY_PATH}/redis/data
 mkdir -p ${MY_PATH}/nginx/logs
 mkdir -p ${MY_PATH}/log
 
 # Kill and remove old proxy containers
 docker kill proxy bavenir-adapter gateway cache-db
 docker rm proxy bavenir-adapter gateway cache-db
-docker rmi bavenir-adapter_bavenir-adapter
+docker rmi bavenir-adapter-fronius_bavenir-adapter
 docker rm $(docker ps -a -q) # Remove zombi containers
 
 # Start proxy container

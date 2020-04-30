@@ -18,7 +18,6 @@ const responseMode = config.responseMode;
 const collectionMode = config.dataCollectionMode;
 const proxyUrl = config.proxyUrl;
 // Modules
-const dummyModule = require('./_modules/dummy');
 const proxyModule = require('./_modules/proxy');
 
 // TBD Include other adapter modules when available
@@ -35,16 +34,16 @@ module.exports.proxyGetProperty = async function(oid, pid){
     let result;
     try{
         await persistance.combinationExists(oid, pid);
-        switch (responseMode) {
-            case 'dummy':
-                result = dummyModule.getProperty(oid, pid);
-                break;
-            case 'proxy':
-                result = await proxyModule.getProperty(oid, pid, proxyUrl);
-                break;
-            default:
-                throw new Error('ADAPTER ERROR: Selected module could not be found');
-        }
+        // switch (responseMode) {
+        //     case 'dummy':
+        //         result = dummyModule.getProperty(oid, pid);
+        //         break;
+        //     case 'proxy':
+        //         result = await proxyModule.getProperty(oid, pid, proxyUrl);
+        //         break;
+        //     default:
+        //         throw new Error('ADAPTER ERROR: Selected module could not be found');
+        // }
         persistance.addToCache(`/objects/${oid}/properties/${pid}`, result);
         logger.debug(`Responded to get property ${pid} of ${oid} in mode: ${responseMode}`, "ADAPTER");
         return Promise.resolve(result);
@@ -66,16 +65,16 @@ module.exports.proxySetProperty = async function(oid, pid, body){
     let result;
     try{ 
         await persistance.combinationExists(oid, pid);
-        switch (responseMode) {
-            case 'dummy':
-                result = dummyModule.setProperty(oid, pid);
-                break;
-            case 'proxy':
-                result = await proxyModule.setProperty(oid, pid, body, proxyUrl);
-                break;
-            default:
-                throw new Error('ADAPTER ERROR: Selected module could not be found');
-        }
+        // switch (responseMode) {
+        //     case 'dummy':
+        //         result = dummyModule.setProperty(oid, pid);
+        //         break;
+        //     case 'proxy':
+        //         result = await proxyModule.setProperty(oid, pid, body, proxyUrl);
+        //         break;
+        //     default:
+        //         throw new Error('ADAPTER ERROR: Selected module could not be found');
+        // }
 
         logger.debug(`Responded to set property ${pid} of ${oid} in mode: ${responseMode}`, "ADAPTER");
         return Promise.resolve(result);

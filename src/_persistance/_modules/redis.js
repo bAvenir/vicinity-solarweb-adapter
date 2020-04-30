@@ -96,6 +96,40 @@ module.exports = {
       });
     });
   },
+  // BASIC STRING STORAGE
+  /**
+   * Save a string
+   * Custom defined ttl
+   */
+  set: (key, item, ttl) => {
+    return new Promise(function (resolve, reject) {
+      client.set(key, item, 'EX', ttl, function(err, reply) {
+        if (err) {
+          logger.error(err, "REDIS");
+          reject(false);
+        } else {
+          logger.debug(reply, "REDIS");
+          resolve(true);
+        }
+      });
+    });
+  },
+  /**
+   * Get a string
+   */
+  get: (key) => {
+    return new Promise(function (resolve, reject) {
+      client.get(key, function(err, reply) {
+        if (err) {
+          logger.error(err, "REDIS");
+          reject(false);
+        } else {
+          logger.debug(reply, "REDIS");
+          resolve(reply);
+        }
+      });
+    });
+  },
   // SETS
   /**
    * Adds item to set

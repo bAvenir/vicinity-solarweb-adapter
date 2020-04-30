@@ -1,8 +1,8 @@
-# bAvenir VICINITY adapter
+# bAvenir VICINITY adapter - FRONIUS
 
-**Current version V.1**
+**Current version V.1 FRONIUS**
 
-This is a Node.js project that acts as an adapter between VICINITY and other technologies or applications.
+This is a Node.js project that acts as an adapter between VICINITY and FRONIUS.
 
 The first version aims to support the following interactions:
 

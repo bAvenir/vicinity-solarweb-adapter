@@ -1,0 +1,12 @@
+[
+  { "pid": "P_Grid", "href": "/energyflow/:id" },
+  { "pid": "P_Load", "href": "/energyflow/:id" },
+  { "pid": "EnergyTotal", "href": "/realtime/:id" },
+  { "pid": "P_PV", "href": "/energyflow/:id" },
+  { "pid": "IsOnline", "href": "/energyflow/:id" },
+  { "pid": "PeakPower", "href": "metadata" },
+  { "pid": "BattMode", "href": "/energyflow/:id" },
+  { "pid": "SOC", "href": "/energyflow/:id" },
+  { "pid": "P_Akku", "href": "/energyflow/:id" },
+  { "pid": "Capacity", "href": "metadata" }
+]

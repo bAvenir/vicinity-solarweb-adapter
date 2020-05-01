@@ -78,6 +78,10 @@ async function _parseMetadata(metadata){
                 metadata[i].Id,
                 metadata[i].PeakPower,
                 );
+            // Need to get individual metadata, it contains more info
+            let aux = await fronius.metadata(metadata[i].Id);
+            newDevice.getDevices(aux.DaloDeviceInfo);
+            newDevice.getProperties();
             await newDevice.storeInMemory();
         }
         await redis.save();

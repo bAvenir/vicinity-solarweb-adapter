@@ -19,6 +19,7 @@ module.exports.initialize = async function(){
     try{
         logger.info('Starting initialization of FRONIUS adapter...', 'FRONIUS');
         await persistance.loadConfigurationFile('properties');
+        await persistance.loadConfigurationFile('mapper');
         await fronius.login();
         await services.addMetadata();
         return Promise.resolve(true);

@@ -19,6 +19,7 @@ const collectionMode = config.dataCollectionMode;
 const proxyUrl = config.proxyUrl;
 // Modules
 const proxyModule = require('./_modules/proxy');
+const froniusModule = require('./_modules/fronius/interface');
 
 // TBD Include other adapter modules when available
 // TBD Handle events and actions sent by gtw
@@ -34,16 +35,7 @@ module.exports.proxyGetProperty = async function(oid, pid){
     let result;
     try{
         await persistance.combinationExists(oid, pid);
-        // switch (responseMode) {
-        //     case 'dummy':
-        //         result = dummyModule.getProperty(oid, pid);
-        //         break;
-        //     case 'proxy':
-        //         result = await proxyModule.getProperty(oid, pid, proxyUrl);
-        //         break;
-        //     default:
-        //         throw new Error('ADAPTER ERROR: Selected module could not be found');
-        // }
+        result = await froniusModule.getData(oid, pid);
         persistance.addToCache(`/objects/${oid}/properties/${pid}`, result);
         logger.debug(`Responded to get property ${pid} of ${oid} in mode: ${responseMode}`, "ADAPTER");
         return Promise.resolve(result);
@@ -75,12 +67,12 @@ module.exports.proxySetProperty = async function(oid, pid, body){
         //     default:
         //         throw new Error('ADAPTER ERROR: Selected module could not be found');
         // }
-
-        logger.debug(`Responded to set property ${pid} of ${oid} in mode: ${responseMode}`, "ADAPTER");
+        result = {"error": false, "message": "PUT method disabled"};
+        logger.debug('FRONIUS set properties is disabled', "ADAPTER");
         return Promise.resolve(result);
     } catch(err) {
         logger.error(err, "ADAPTER")
-        return Promise.reject({error: true, message: err.message})
+        return Promise.reject({error: true, value: null})
     }
 }
 
@@ -94,7 +86,6 @@ module.exports.proxySetProperty = async function(oid, pid, body){
  */
 module.exports.proxyReceiveEvent = async function(oid, eid, body){
     let logger = new Log();
-    let result;
     try{ 
         // TBD Check if combination of oid + pid exists
 

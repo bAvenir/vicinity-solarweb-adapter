@@ -1,6 +1,6 @@
 [
     {
-        "pid": "peakpower",
+        "pid": "PeakPower",
         "monitors": "adapters:PVInstalledCapacity",
         "read_link": {
             "href": "/device/{oid}/property/{pid}",
@@ -31,7 +31,7 @@
         }
     },
     {
-        "pid": "energytotal",
+        "pid": "EnergyTotal",
         "monitors": "adapters:AccumulatedEnergyProduced",
         "read_link": {
             "href": "/device/{oid}/property/{pid}",
@@ -62,7 +62,7 @@
         }
     },
     {
-        "pid": "isonline",
+        "pid": "IsOnline",
         "monitors": "adapters:DeviceStatus",
         "read_link": {
             "href": "/device/{oid}/property/{pid}",
@@ -104,7 +104,7 @@
                         "name": "value",
                         "predicate": "core:value",
                         "schema": {
-                            "type": "integer"
+                            "type": "double"
                         }
                     },
                     {
@@ -135,7 +135,7 @@
                         "name": "value",
                         "predicate": "core:value",
                         "schema": {
-                            "type": "integer"
+                            "type": "double"
                         }
                     },
                     {
@@ -166,6 +166,124 @@
                         "name": "value",
                         "predicate": "core:value",
                         "schema": {
+                            "type": "double"
+                        }
+                    },
+                    {
+                        "name": "units",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "pid": "BattMode",
+        "monitors": "adapters:BatteryActualControlMode",
+        "read_link": {
+            "href": "/device/{oid}/property/{pid}",
+            "output": {
+                "type": "object",
+                "field": [
+                    {
+                        "name": "property",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "predicate": "core:value",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "pid": "SOC",
+        "monitors": "adapters:ActualBatteryStateOfCharge",
+        "read_link": {
+            "href": "/device/{oid}/property/{pid}",
+            "output": {
+                "type": "object",
+                "field": [
+                    {
+                        "name": "property",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "predicate": "core:value",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "units",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "pid": "P_Akku",
+        "monitors": "adapters:BatteryActualDCPower",
+        "read_link": {
+            "href": "/device/{oid}/property/{pid}",
+            "output": {
+                "type": "object",
+                "field": [
+                    {
+                        "name": "property",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "predicate": "core:value",
+                        "schema": {
+                            "type": "double"
+                        }
+                    },
+                    {
+                        "name": "units",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "pid": "Capacity",
+        "monitors": "adapters:BatteryNominalCapacity",
+        "read_link": {
+            "href": "/device/{oid}/property/{pid}",
+            "output": {
+                "type": "object",
+                "field": [
+                    {
+                        "name": "property",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "predicate": "core:value",
+                        "schema": {
                             "type": "integer"
                         }
                     },
@@ -179,5 +297,4 @@
             }
         }
     }
-
 ]

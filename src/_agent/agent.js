@@ -102,3 +102,28 @@ module.exports.exportToFile = async function(type){
         return Promise.reject(err);
     }
 }
+
+/**
+ * Register one device
+ */
+module.exports.register = async function(body){
+    try{
+        await services.registerObject(body);
+        return Promise.resolve(true);
+    }catch(err){
+        return Promise.reject(err);
+    }
+}
+
+/**
+ * Unregister one device
+ * @param {object} {oids: []}
+ */
+module.exports.unRegister = async function(body){
+    try{
+        await services.removeObject(body);
+        return Promise.resolve(true);
+    }catch(err){
+        return Promise.reject(err);
+    }
+}

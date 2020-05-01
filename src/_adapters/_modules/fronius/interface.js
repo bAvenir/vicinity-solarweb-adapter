@@ -4,7 +4,7 @@
 * @interface
 */ 
 
-const Request = require('./froniusRequest');
+const Request = require('./classes/froniusRequest');
 const config = require('../../configuration');
 const redis = require('../../../_persistance/_modules/redis');
 
@@ -19,6 +19,7 @@ module.exports.login = async function(){
     try{
         let req = new Request();
         req.setUri('/auth/login');
+        req.setMethod('POST');
         req.setBody(_getBody());
         let token = await req.send();
         if(!token.AccessToken) throw new Error('Token was not received from FRONIUS API');

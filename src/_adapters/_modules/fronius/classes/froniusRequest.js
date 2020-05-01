@@ -4,8 +4,8 @@
  * @class
  */
 
-const Request = require('../../../_classes/request');
-const config = require('../../configuration');
+const Request = require('../../../../_classes/request');
+const config = require('../../../configuration');
 
  module.exports = class froniusRequest extends Request{
 
@@ -17,7 +17,7 @@ const config = require('../../configuration');
             'Accept' : 'application/json',
             'simple': false
           };
-        this.url = "http://" + config.host + config.baseURL;
+        this.url = config.host + config.baseURL;
       }
 
     setUri(endpoint){

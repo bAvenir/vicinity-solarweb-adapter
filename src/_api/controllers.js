@@ -8,6 +8,7 @@ const Log = require('../_classes/logger');
 const persistance =  require('../_persistance/interface');
 const agent = require('../_agent/agent');
 const gateway = require('../_agent/interface');
+const fronius = require('../_adapters/_modules/fronius/fronius');
 
 // ADMINISTRATION endpoints
 
@@ -256,3 +257,45 @@ module.exports.exportFile = function(req, res){
     let gtwHealth = await gateway.health();
     res.json({error: false, message: {'Redis' : redisHealth, 'Gateway': gtwHealth, 'NodeApp': 'OK'} });
 }
+
+// FRONIUS endpoints
+
+module.exports.froniusDiscover = function(req, res){
+    let id = req.params.id;
+    let logger = new Log();
+    fronius.discover(id)
+    .then((response) => {
+        res.json(response)
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
+}
+
+module.exports.froniusRegister = function(req, res){
+    let id = req.params.id;
+    let logger = new Log();
+    fronius.register(id)
+    .then(() => {
+        res.json({error: false, message: 'DONE'})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
+}
+
+module.exports.froniusUnregister = function(req, res){
+    let id = req.params.id;
+    let logger = new Log();
+    fronius.unRegister(id)
+    .then(() => {
+        res.json({error: false, message: 'DONE'})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
+}
+

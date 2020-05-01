@@ -12,6 +12,7 @@ let logger = new Log();
 
 // Load services
 const agent = require('./src/_agent/agent');
+const fronius = require('./src/_adapters/_modules/fronius/fronius');
 
 // Set up redis cache db
 let cache = require("./src/_persistance/_modules/redis");
@@ -69,6 +70,7 @@ async function bootstrap(){
 
     // TBD decide what to do if initialization fails (Stop adapter, restart, notify ...)
     await agent.initialize();
+    await fronius.initialize();
 
     // Run other services here
     // ...

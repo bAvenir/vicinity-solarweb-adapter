@@ -39,6 +39,11 @@ router
   .get('/export/actions', controller.exportFile)
   .get('/export/events', controller.exportFile)
   // HEALTHCHECK endpoints
-  .get('/healthcheck', controller.healthcheck);
+  .get('/healthcheck', controller.healthcheck)
+  // FRONIUS endpoints
+  .get('/fronius/discover', controller.froniusDiscover)
+  .get('/fronius/discover/:id', controller.froniusDiscover)
+  .post('/fronius/register/:id', controller.froniusRegister)
+  .delete('/fronius/register/:id', controller.froniusUnregister);
 
   module.exports = router;

@@ -44,6 +44,9 @@ router
   .get('/fronius/discover', controller.froniusDiscover)
   .get('/fronius/discover/:id', controller.froniusDiscover)
   .post('/fronius/register/:id', controller.froniusRegister)
-  .delete('/fronius/register/:id', controller.froniusUnregister);
+  .delete('/fronius/register/:id', controller.froniusUnregister)
+  // FRONIUS Events
+  .post('/fronius/events', controller.froniusStartEvents)
+  .delete('/fronius/events', controller.froniusStopEvents);
 
   module.exports = router;

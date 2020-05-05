@@ -5,9 +5,13 @@
  */
 
 const Log = require('../../../_classes/logger');
-const fronius = require('./interface');
 const Obj = require('./classes/froniusObject');
+const Events = require('./classes/froniusEvents');
+const fronius = require('./interface');
 const redis = require('../../../_persistance/_modules/redis');
+
+// Create global events object
+let froniusEvents = new Events();
 
 let services = {};
 
@@ -66,6 +70,24 @@ services.discover = async function(id){
     }
 }
 
+/**
+ * Activate events
+ */
+services.activateEvents = function(){
+    let logger = new Log();
+    froniusEvents.startEvents();
+    logger.info('Start sending events!', "FRONIUS");
+}
+
+/**
+ * Deactivate events
+ */
+services.deactivateEvents = function(){
+    let logger = new Log();
+    froniusEvents.stopEvents();
+    logger.info('Stop sending events!', "FRONIUS");
+}
+
 module.exports = services;
 
 // Private functions
@@ -81,7 +103,8 @@ async function _parseMetadata(metadata){
             // Need to get individual metadata, it contains more info
             let aux = await fronius.metadata(metadata[i].Id);
             newDevice.getDevices(aux.DaloDeviceInfo);
-            newDevice.getProperties();
+            await newDevice.getProperties();
+            newDevice.getEvents();
             await newDevice.storeInMemory();
         }
         await redis.save();
@@ -90,3 +113,4 @@ async function _parseMetadata(metadata){
         return Promise.reject(err);
     }
 }
+

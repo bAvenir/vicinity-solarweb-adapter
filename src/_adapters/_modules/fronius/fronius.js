@@ -19,9 +19,11 @@ module.exports.initialize = async function(){
     try{
         logger.info('Starting initialization of FRONIUS adapter...', 'FRONIUS');
         await persistance.loadConfigurationFile('properties');
+        await persistance.loadConfigurationFile('events');
         await persistance.loadConfigurationFile('mapper');
         await fronius.login();
         await services.addMetadata();
+        services.activateEvents();
         return Promise.resolve(true);
     }catch(err){
         logger.error(err, 'FRONIUS')
@@ -62,6 +64,30 @@ module.exports.discover = async function(id){
     try{
         let result = await services.discover(id);
         return Promise.resolve(result);
+    }catch(err){
+        return Promise.reject(err);
+    }
+}
+
+/**
+ * Activate events of FRONIUS module
+ */
+module.exports.activateEvents = async function(){
+    try{
+        services.activateEvents();
+        return Promise.resolve(true);
+    }catch(err){
+        return Promise.reject(err);
+    }
+}
+
+/**
+ * Deactivate events of FRONIUS module
+ */
+module.exports.deactivateEvents = async function(){
+    try{
+        services.deactivateEvents();
+        return Promise.resolve(true);
     }catch(err){
         return Promise.reject(err);
     }

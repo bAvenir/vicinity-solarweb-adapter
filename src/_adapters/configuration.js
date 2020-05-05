@@ -25,4 +25,6 @@ config.deviceid = process.env.FRONIUS_DeviceId;
 config.devicedescription = process.env.FRONIUS_DeviceDescription;
 config.appversion = process.env.FRONIUS_AppVersion;
 config.osversion = process.env.FRONIUS_OsVersion;
+config.events = process.env.FRONIUS_Events;
+config.eventsInterval = process.env.FRONIUS_Events_Interval;
 

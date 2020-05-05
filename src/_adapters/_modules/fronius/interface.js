@@ -57,20 +57,29 @@ module.exports.getData = async function(oid, pid){
     try{
         let req = new Request();
         let result, data;
+        // Build href
         let href = await redis.hget(`map:${pid}`, 'href');
         if(href == null) throw new Error('Property not defined in mapper.json');
         let id = await redis.hget(oid, "adapterId");
-        if(href === 'metadata'){
+        href = href.replace(":id", id);
+        // Check if data cached
+        let cachedData = await redis.get(href);
+        if(cachedData){
+            // Obtain values from cache
+            let d = JSON.parse(cachedData);
+            result = {value: d[pid], property: pid};
+        } else if(href === 'metadata'){
             // Obtain value from local storage
             data = await redis.hget(id, pid);
             result = {value: data, property: pid};
         } else {
             // Obtain value calling API
-            req.setUri(href.replace(":id", id));
+            req.setUri(href);
             let token = await redis.get('FRONIUSTOKEN');
             if(!token) token = await this.login(); // If token expired, refresh it
             req.addHeader("AccessToken", token);
             data = await req.send();
+            await redis.caching(href, data)
             result = {value: data[pid], property: pid};
         }
         return Promise.resolve(result);
@@ -79,46 +88,6 @@ module.exports.getData = async function(oid, pid){
         return Promise.reject(err);
     }
 }
-
-// /**
-//  * Get Cummulated energy
-//  * @return {object} value requested
-//  */
-// module.exports.realtime = async function(oid, pid){
-//     try{
-//         let req = new Request();
-//         let id = await redis.hget(oid, "adapterId");
-//         req.setUri(`/realtime/${id}`);
-//         let token = await redis.get('FRONIUSTOKEN');
-//         if(!token) token = await this.login(); // If token expired, refresh it
-//         req.addHeader("AccessToken", token);
-//         let data = await req.send();
-//         let result = _processRealtimeData(data, pid);
-//         return Promise.resolve(result);
-//     } catch(err) {
-//         return Promise.reject(err);
-//     }
-// }
-
-// /**
-//  * Get energyflow values
-//  * @return {object} value requested
-//  */
-// module.exports.energyflow = async function(oid, pid){
-//     try{
-//         let req = new Request();
-//         let id = await redis.hget(oid, "adapterId");
-//         req.setUri(`/realtime/${id}`);
-//         let token = await redis.get('FRONIUSTOKEN');
-//         if(!token) token = await this.login(); // If token expired, refresh it
-//         req.addHeader("AccessToken", token);
-//         let data = await req.send();
-//         let result = _processEnergyflowData(data, pid);
-//         return Promise.resolve(result);
-//     } catch(err) {
-//         return Promise.reject(err);
-//     }
-// }
 
 // Private functions 
 
@@ -136,27 +105,3 @@ function _getBody() {
         "OsVersion": config.osversion
     };
 }
-
-// /**
-//  * Maps FRONIUS response with the VICINITY values
-//  * For realtime endpoint
-//  * Returns requested pid and caches the rest
-//  * @param {object} data 
-//  * @param {string} pid 
-//  * @returns {object} pid:value
-//  */
-// function _processRealtimeData(data, pid){
-//     return {"value": true}
-// }
-
-// /**
-//  * Maps FRONIUS response with the VICINITY values
-//  * For energyflow endpoint
-//  * Returns requested pid and caches the rest
-//  * @param {object} data 
-//  * @param {string} pid 
-//  * @returns {object} pid:value
-//  */
-// function _processEnergyflowData(data, pid){
-//     return {"value": true}
-// }

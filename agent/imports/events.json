@@ -1,0 +1,52 @@
+[
+    {
+        "eid": "battery",
+        "monitors": "adapters:BatteryOperationalStatus",
+        "output": {
+            "type": "array",
+            "description": "array of objects with properties and value",
+            "item": {
+                "type": "object",
+                "field": [
+                    {
+                        "name": "property",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "eid": "pv",
+        "monitors": "adapters:InverterStatus",
+        "output": {
+            "type": "array",
+            "description": "array of objects with properties and value",
+            "item": {
+                "type": "object",
+                "field": [
+                    {
+                        "name": "property",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    } 
+]

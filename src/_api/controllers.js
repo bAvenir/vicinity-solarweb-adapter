@@ -299,3 +299,26 @@ module.exports.froniusUnregister = function(req, res){
     })
 }
 
+module.exports.froniusStartEvents = function(req, res){
+    let logger = new Log();
+    fronius.activateEvents()
+    .then(() => {
+        res.json({error: false, message: 'DONE'})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
+}
+
+module.exports.froniusStopEvents = function(req, res){
+    let logger = new Log();
+    fronius.deactivateEvents()
+    .then(() => {
+        res.json({error: false, message: 'DONE'})
+    })
+    .catch((err) => {
+        logger.error(err, "ADMIN");
+        res.json({error: true, message: "Something went wrong, check the logs for more info"})
+    })
+}

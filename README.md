@@ -82,6 +82,19 @@ Example:
     #### Collection Modes ["dummy", "proxy"]
     ADAPTER_DATA_COLLECTION_MODE="dummy"
     ADAPTER_PROXY_URL="http://192.168.0.1:8000/proxy"
+    #### FRONIUS adapter
+    FRONIUS_HOST="https://api.solarweb.com"
+    FRONIUS_BASEURL="/thirdparty"
+    FRONIUS_Username="string"
+    FRONIUS_Password="string"
+    FRONIUS_ApiKey="string"
+    FRONIUS_DeviceId="string"
+    FRONIUS_DeviceDescription="string"
+    FRONIUS_AppVersion="string"
+    FRONIUS_OsVersion="string"
+    #### Push events ["enabled", "disabled"] Interval defaults 15min (in seconds)
+    FRONIUS_Events="enabled"
+    FRONIUS_Events_Interval=900000
     ## Persistance
     PERSISTANCE_DB="redis"
     PERSISTANCE_DB_HOST="cache-db"

@@ -34,15 +34,43 @@ const agent = require('../../../../_agent/agent');
         }
       }
 
-      getProperties(){
-        let properties = [];
-        let batteryProperties = ['BattMode', 'SOC', 'P_Akku', 'Capacity'];
-        let pvProperties = ["EnergyTotal", "P_PV", "P_Load", "P_Grid", "IsOnline", "PeakPower"];
-        if(this.pvs > 0) properties = [...pvProperties];
-        if(this.batteries > 0) properties = [...properties, ...batteryProperties];
-        this.properties = properties;
+      /** 
+       * Add properties during registration
+       * Battery and/or pv properties based on FRONIUS metadata
+       */
+      async getProperties(){
+        let newProperties = []; // Device properties to be added to metadata
+        let properties = await redis.smembers('properties');
+        let batteryProperties = [];
+        let pvProperties = [];
+        let aux;
+        for(let i=0, l=properties.length; i<l; i++){
+          aux = await redis.hget(`map:${properties[i]}`, 'type');
+          if(aux === 'pv'){
+            pvProperties.push(properties[i]);
+          } else {
+            batteryProperties.push(properties[i]);
+          }
+        }          
+        if(this.pvs > 0) newProperties = [...pvProperties];
+        if(this.batteries > 0) newProperties.push(...batteryProperties);
+        this.properties = newProperties;
       }
 
+        /** 
+       * Add events during registration
+       * Battery and/or pv events based on FRONIUS metadata
+       */
+      getEvents(){     
+        let events = [];   
+        if(this.pvs > 0) events.push('pv');
+        if(this.batteries > 0) events.push('battery');
+        this.events = events;
+      }
+
+      /**
+       * Store FRONIUS metadata info in adapter memory
+       */
       async storeInMemory(){
         try{
             await redis.sadd("FRONIUSDEVICES", this.adapterId);
@@ -54,8 +82,16 @@ const agent = require('../../../../_agent/agent');
             await redis.hset(this.adapterId, "pvs", this.pvs);
             await redis.hset(this.adapterId, "Capacity", this.Capacity);
             await redis.hset(this.adapterId, "batteries", this.batteries);
-            await redis.hset(this.adapterId, "properties", this.properties.toString());
-            return Promise.resolve(true);
+            if(this.properties.length > 0){
+              await redis.hset(this.adapterId, "properties", this.properties.toString());
+            } else {
+              await redis.hdel(this.adapterId, "properties");
+            }
+            if(this.events.length > 0){
+              await redis.hset(this.adapterId, "events", this.events.toString());
+            } else {
+              await redis.hdel(this.adapterId, "events");
+            }            return Promise.resolve(true);
           } catch(err) {
             return Promise.reject(err);
         }
@@ -70,8 +106,9 @@ const agent = require('../../../../_agent/agent');
           let oid = await redis.hget(id, 'oid');
           if(oid) throw new Error(`FRONIUS object ${id} is already register with VICINITY OID ${oid}`);
           let toRegister = await redis.hgetall(id);
-          toRegister.properties = toRegister.properties.split(',');
-          if(toRegister.properties.length === 0) throw new Error("There are not properties register, is not possible to register object...");
+          toRegister.properties = toRegister.properties ? toRegister.properties.split(',') : [];
+          toRegister.events = toRegister.events ? toRegister.events.split(',') : [];
+          if(toRegister.properties.length === 0 && toRegister.events.length === 0) throw new Error("There are not properties register, is not possible to register object...");
           await agent.register(toRegister);
           // Add oid to FRONIUS OBJECT
           let flag = false;

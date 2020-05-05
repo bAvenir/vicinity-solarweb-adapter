@@ -216,6 +216,7 @@ async function _storeMapper(array){
             if(array[i].pid && array[i].href){
                 await redis.hset(`map:${array[i].pid}`, 'pid', array[i].pid);
                 await redis.hset(`map:${array[i].pid}`, 'href', array[i].href);
+                await redis.hset(`map:${array[i].pid}`, 'type', array[i].type);
             }
         }
         logger.info('Mappings loaded', 'PERSISTANCE');

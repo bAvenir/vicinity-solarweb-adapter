@@ -63,7 +63,7 @@ Example:
     #### Environments ["development", "production"]
     NODE_ENV=production
     ## SERVER
-    SERVER_PORT=9997
+    SERVER_PORT=3000
     SERVER_IP=0.0.0.0
     SERVER_TIMEOUT=10000
     SERVER_MAX_PAYLOAD=100kb

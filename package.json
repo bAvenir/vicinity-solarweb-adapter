@@ -1,7 +1,7 @@
 {
-  "name": "bAvenirAdapter",
+  "name": "froniusAdapter",
   "version": "1.0.0",
-  "description": "bAvenir generic adapter to VICINITY",
+  "description": "Fronius adapter to VICINITY",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

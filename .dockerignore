@@ -1,0 +1,14 @@
+# ignore .git and .cache folders
+.git
+.cache
+.gitignore
+# config & secrets
+.env
+# docker files
+docker*
+Dockerfile
+# development & testing
+.scannerwork/
+sonar-scanner.js
+*.sh
+coverage/

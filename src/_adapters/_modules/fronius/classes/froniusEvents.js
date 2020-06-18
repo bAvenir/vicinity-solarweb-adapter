@@ -4,11 +4,12 @@
  * @class
  */
 
-const redis = require('../../../../_persistance/_modules/redis');
-const agent = require('../../../../_agent/interface');
+const vcntagent = require('bavenir-agent'); 
+const redis = vcntagent.redis;
+const gateway = vcntagent.gateway;
 const fronius = require('../interface');
 const config = require('../../../configuration');
-const Log = require('../../../../_classes/logger');
+const Log = vcntagent.classes.logger;
 
  module.exports = class froniusEvents{
 
@@ -16,8 +17,8 @@ const Log = require('../../../../_classes/logger');
 
     startEvents(){
         let logger = new Log();
-        if(config.events === 'enabled'){
-            this.event = setInterval(this._sendEvents, config.eventsInterval);
+        if(config.fronius.events === 'enabled'){
+            this.event = setInterval(this._sendEvents, config.fronius.eventsInterval);
         } else {
             logger.warn('Events are disabled in configuration...', 'FRONIUS_EVENTS');
         }
@@ -25,7 +26,7 @@ const Log = require('../../../../_classes/logger');
 
     stopEvents(){
         let logger = new Log();
-        if(config.events === 'enabled'){
+        if(config.fronius.events === 'enabled'){
             clearInterval(this.event);
         } else {
             logger.warn('Events are disabled in configuration...', 'FRONIUS_EVENTS');
@@ -54,8 +55,8 @@ const Log = require('../../../../_classes/logger');
                         if(type === 'pv') { ePv[properties[j]] = aux.value; }
                         else { eBattery[properties[j]] = aux.value; }
                     }
-                    if(events.indexOf('pv') !== -1) await agent.publishEvent(oid, 'pv', ePv); 
-                    if(events.indexOf('battery') !== -1) await agent.publishEvent(oid, 'battery', eBattery);
+                    if(events.indexOf('pv') !== -1) await gateway.publishEvent(oid, 'pv', ePv); 
+                    if(events.indexOf('battery') !== -1) await gateway.publishEvent(oid, 'battery', eBattery);
                 }
             }
             logger.info('FRONIUS events published', 'FRONIUS_EVENTS');

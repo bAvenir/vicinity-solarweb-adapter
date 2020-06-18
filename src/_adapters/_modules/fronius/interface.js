@@ -6,7 +6,11 @@
 
 const Request = require('./classes/froniusRequest');
 const config = require('../../configuration');
-const redis = require('../../../_persistance/_modules/redis');
+const vcntagent = require('bavenir-agent');
+const redis = vcntagent.redis;
+const Log = vcntagent.classes.logger;
+let logger = new Log();
+
 
 // ***** AUTHENTICATION *****
 
@@ -24,8 +28,10 @@ module.exports.login = async function(){
         let token = await req.send();
         if(!token.AccessToken) throw new Error('Token was not received from FRONIUS API');
         await redis.set('FRONIUSTOKEN', token.AccessToken, 86400); // Expires in one day
+        logger.info('Successfuly logged in SOLAR WEB API', 'FRONIUS_INTERFACE');
         return Promise.resolve(token.AccessToken);
     } catch(err) {
+        logger.error(err, "FRONIUS_INTERFACE");
         return Promise.reject(err);
     }
 }
@@ -46,6 +52,7 @@ module.exports.metadata = async function(id){
         let metadata = await req.send();
         return Promise.resolve(metadata);
     } catch(err) {
+        logger.error(err, "FRONIUS_INTERFACE");
         return Promise.reject(err);
     }
 }
@@ -85,6 +92,7 @@ module.exports.getData = async function(oid, pid){
         return Promise.resolve(result);
     }catch(err){
         await this.login();
+        logger.error(err, "FRONIUS_INTERFACE");
         return Promise.reject(err);
     }
 }
@@ -96,12 +104,12 @@ module.exports.getData = async function(oid, pid){
  */
 function _getBody() {
     return {
-        "Username": config.username,
-        "Password": config.password,
-        "ApiKey": config.apikey,
-        "DeviceId": config.deviceid,
-        "DeviceDescription": config.devicedescription,
-        "AppVersion": config.appversion,
-        "OsVersion": config.osversion
+        "Username": config.fronius.username,
+        "Password": config.fronius.password,
+        "ApiKey": config.fronius.apikey,
+        "DeviceId": config.fronius.deviceid,
+        "DeviceDescription": config.fronius.devicedescription,
+        "AppVersion": config.fronius.appversion,
+        "OsVersion": config.fronius.osversion
     };
 }

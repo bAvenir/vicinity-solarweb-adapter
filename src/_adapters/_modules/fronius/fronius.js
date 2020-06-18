@@ -6,8 +6,9 @@
 
 const fronius = require('./interface');
 const services = require('./services');
-const persistance = require('../../../_persistance/interface');
-const Log = require('../../../_classes/logger');
+const vcntagent = require('bavenir-agent'); 
+const persistance = vcntagent.persistance;
+const Log = vcntagent.classes.logger;
 
 /**
  * Initialization process of FRONIUS module
@@ -18,9 +19,7 @@ module.exports.initialize = async function(){
     let logger = new Log();
     try{
         logger.info('Starting initialization of FRONIUS adapter...', 'FRONIUS');
-        await persistance.loadConfigurationFile('properties');
-        await persistance.loadConfigurationFile('events');
-        await persistance.loadConfigurationFile('mapper');
+        await persistance.loadConfigurationFile('mappers');
         await fronius.login();
         await services.addMetadata();
         services.activateEvents();

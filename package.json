@@ -1,7 +1,7 @@
 {
   "name": "froniusAdapter",
   "version": "1.0.0",
-  "description": "Fronius adapter to VICINITY",
+  "description": "Solar Web adapter to VICINITY",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -9,23 +9,27 @@
     "test": "jest --coverage",
     "analyze": "node sonar-scanner.js"
   },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "engineStrict": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bAvenir/vicinity-solarweb-adapter.git"
+  },
   "author": "Jorge Almela",
   "license": "MIT",
   "dependencies": {
+    "bavenir-agent": "^1.1.2",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-rate-limit": "^5.1.1",
-    "got": "^10.7.0",
     "helmet": "^3.22.0",
-    "morgan": "^1.9.1",
     "path": "^0.12.7",
-    "redis": "^3.0.2",
     "stoppable": "^1.1.0",
-    "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.4.2"
+    "swagger-ui-express": "^4.1.4"
   },
   "devDependencies": {
     "jest": "^25.2.4",

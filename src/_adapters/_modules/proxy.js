@@ -4,7 +4,7 @@
  * Adapter acts as a proxy
  */
 
- const Req = require('../../_classes/request');
+ const Req = require('bavenir-agent').classes.request;
 
  let fun = {};
 

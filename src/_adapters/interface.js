@@ -10,8 +10,9 @@
 */ 
 
 // Import logger
-const Log = require('../_classes/logger');
-const persistance =  require('../_persistance/interface');
+const vcntagent = require('bavenir-agent');
+const Log = vcntagent.classes.logger;
+const persistance =  vcntagent.persistance;
 // Configuration Modes
 const config = require('./configuration');
 const responseMode = config.responseMode;

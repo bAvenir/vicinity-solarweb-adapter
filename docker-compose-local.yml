@@ -1,0 +1,19 @@
+version: '2.4'
+
+services:
+  gateway:
+    container_name: gateway
+    volumes:
+    - ./gateway/GatewayConfigLocal.xml:/gateway/config/GatewayConfig.xml:ro
+    ports:
+    - 8181:8181
+    image: bavenir/vicinity-gateway-api:latest
+  cache-db:
+    container_name: cache-db
+    volumes:
+    - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    ports:
+    - 6379:6379
+    command:
+    - /usr/local/etc/redis/redis.conf
+    image: redis:buster

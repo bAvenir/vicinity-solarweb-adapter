@@ -24,4 +24,4 @@ RUN npm test
 CMD ["npm", "run", "test"]
 
 FROM source as prod
-CMD ["node", "index.js"]
+CMD ["npm", "run", "start"]

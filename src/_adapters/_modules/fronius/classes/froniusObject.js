@@ -3,9 +3,10 @@
  * @class
  */
 
-const Log = require('../../../../_classes/logger');
-const redis = require('../../../../_persistance/_modules/redis');
-const agent = require('../../../../_agent/agent');
+const vcntagent = require('bavenir-agent'); 
+const Log = vcntagent.classes.logger;
+const redis = vcntagent.redis;
+const agent = vcntagent.services;
 
  module.exports = class froniusObject{
 
@@ -91,7 +92,9 @@ const agent = require('../../../../_agent/agent');
               await redis.hset(this.adapterId, "events", this.events.toString());
             } else {
               await redis.hdel(this.adapterId, "events");
-            }            return Promise.resolve(true);
+            }    
+                    
+            return Promise.resolve(true);
           } catch(err) {
             return Promise.reject(err);
         }
@@ -109,7 +112,7 @@ const agent = require('../../../../_agent/agent');
           toRegister.properties = toRegister.properties ? toRegister.properties.split(',') : [];
           toRegister.events = toRegister.events ? toRegister.events.split(',') : [];
           if(toRegister.properties.length === 0 && toRegister.events.length === 0) throw new Error("There are not properties register, is not possible to register object...");
-          await agent.register(toRegister);
+          await agent.registerObject(toRegister);
           // Add oid to FRONIUS OBJECT
           let flag = false;
           let oids = await redis.smembers("registrations");
@@ -137,7 +140,7 @@ const agent = require('../../../../_agent/agent');
           oid = await redis.hget(id, 'oid');
           if(!oid) throw new Error(`FRONIUS object ${id} is not registered in VICINITY...`);
           await redis.hdel(id, 'oid');
-          await agent.unRegister({oids: [oid]});
+          await agent.unregisterObject(oid);
           return Promise.resolve(true);
         }catch(err){
           // Notify case local object unregistered but not removed in platform

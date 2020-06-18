@@ -4,11 +4,13 @@
  * Can be used by fronius.js
  */
 
-const Log = require('../../../_classes/logger');
+const vcntagent = require('bavenir-agent'); 
+const Log = vcntagent.classes.logger;
 const Obj = require('./classes/froniusObject');
 const Events = require('./classes/froniusEvents');
 const fronius = require('./interface');
-const redis = require('../../../_persistance/_modules/redis');
+const redis = vcntagent.redis;
+let logger = new Log();
 
 // Create global events object
 let froniusEvents = new Events();
@@ -19,13 +21,13 @@ let services = {};
  * Perform login of all registered objects
  */
 services.addMetadata = async function(){
-    let logger = new Log();
     try{
         let metadata = await fronius.metadata();
         await _parseMetadata(metadata);
         logger.info('Metadata parsed...', "FRONIUS");
         return Promise.resolve(true);
     } catch(err) {
+        logger.error(err, "FRONIUS_SERVICES");
         return Promise.reject(err);
     }
 }
@@ -34,12 +36,12 @@ services.addMetadata = async function(){
  * Perform login of all registered objects
  */
 services.register = async function(id){
-    let logger = new Log();
     try{
         await Obj.register(id);
         logger.info(`Object ${id} registered...`, "FRONIUS");
         return Promise.resolve(true);
     } catch(err) {
+        logger.error(err, "FRONIUS_SERVICES");
         return Promise.reject(err);
     }
 }
@@ -48,12 +50,12 @@ services.register = async function(id){
  * Perform login of all registered objects
  */
 services.unRegister = async function(id){
-    let logger = new Log();
     try{
         await Obj.unRegister(id);
         logger.info(`Object ${id} removed...`, "FRONIUS");
         return Promise.resolve(true);
     } catch(err) {
+        logger.error(err, "FRONIUS_SERVICES");
         return Promise.reject(err);
     }
 }
@@ -66,6 +68,7 @@ services.discover = async function(id){
         let result = await Obj.discover(id);
         return Promise.resolve(result);
     } catch(err) {
+        logger.error(err, "FRONIUS_SERVICES");
         return Promise.reject(err);
     }
 }
@@ -74,7 +77,6 @@ services.discover = async function(id){
  * Activate events
  */
 services.activateEvents = function(){
-    let logger = new Log();
     froniusEvents.startEvents();
     logger.info('Start sending events!', "FRONIUS");
 }
@@ -83,7 +85,6 @@ services.activateEvents = function(){
  * Deactivate events
  */
 services.deactivateEvents = function(){
-    let logger = new Log();
     froniusEvents.stopEvents();
     logger.info('Stop sending events!', "FRONIUS");
 }
@@ -110,6 +111,7 @@ async function _parseMetadata(metadata){
         await redis.save();
         return Promise.resolve(true);
     }catch(err){
+        logger.error(err, "FRONIUS_SERVICES");
         return Promise.reject(err);
     }
 }

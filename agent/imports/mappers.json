@@ -1,0 +1,12 @@
+[
+  { "id": "P_Grid", "href": "/energyflow/:id", "type": "pv" },
+  { "id": "P_Load", "href": "/energyflow/:id", "type": "pv" },
+  { "id": "EnergyTotal", "href": "/realtime/:id", "type": "pv" },
+  { "id": "P_PV", "href": "/energyflow/:id", "type": "pv" },
+  { "id": "IsOnline", "href": "/energyflow/:id", "type": "pv" },
+  { "id": "PeakPower", "href": "metadata", "type": "pv" },
+  { "id": "BattMode", "href": "/energyflow/:id", "type": "battery" },
+  { "id": "SOC", "href": "/energyflow/:id", "type": "battery" },
+  { "id": "P_Akku", "href": "/energyflow/:id", "type": "battery" },
+  { "id": "Capacity", "href": "metadata", "type": "battery" }
+]
